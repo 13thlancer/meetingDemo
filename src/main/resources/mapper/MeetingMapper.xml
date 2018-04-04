@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.meeting.dao.MeetingMapper">
+
+
+	<sql id="Base_Column_List" >
+	
+		ID_ 			id,
+		MEETING_THEME_ 	meetingTheme,
+		STARTTIME_ 		starttime,
+		ENDTIME_ 		endtime,
+		MEETING_LOCATION_ meetingLocation,
+		MEETING_STATUS_ meetingStatus,
+		SUPER_ORG_ID_ 	superOrgId,
+	    CREATE_EMP_ 	createEmp,
+	    CREATE_TIME_ 	createTime,
+	    UPDATE_EMP_ 	updateEmp,
+	    UPDATE_TIME_ 	updateTime,
+	    VERSION 		version,
+		MEETING_BRIEF_ 	meetingBrief,
+		MEETING_NOTICE_ meetingNotice,
+		DELETE_STATUS_ 	deleteStatus
+	</sql>
+	
+	
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.v4ward.meeting.model.SysMeeting">
+		iNSERT INTO SYS_MEETING (ID_, MEETING_THEME_, STARTTIME_, 
+	      ENDTIME_, MEETING_LOCATION_, MEETING_STATUS_, 
+	      SUPER_ORG_ID_, CREATE_EMP_, CREATE_TIME_, 
+	      UPDATE_EMP_, UPDATE_TIME_, VERSION, 
+	      MEETING_BRIEF_, MEETING_NOTICE_,DELETE_STATUS_)
+	    VALUES (#{id,jdbcType=VARCHAR}, #{meetingTheme,jdbcType=VARCHAR}, #{starttime,jdbcType=TIMESTAMP}, 
+	      #{endtime,jdbcType=TIMESTAMP}, #{meetingLocation,jdbcType=VARCHAR}, #{meetingStatus,jdbcType=TINYINT}, 
+	      #{superOrgId,jdbcType=VARCHAR}, #{createEmp,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+	      #{updateEmp,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER}, 
+	      #{meetingBrief,jdbcType=LONGVARCHAR}, #{meetingNotice,jdbcType=LONGVARCHAR},#{deleteStatus,jdbcType=TINYINT})
+
+	</insert>
+
+
+	<!-- 查询会议列表 -->
+	<select id="listMeetings" parameterType="java.util.Map" resultType="java.util.Map">
+	
+		SELECT
+		<include refid="Base_Column_List"></include>
+		,(SELECT fullnames_ FROM tb_org org WHERE org.id_=SUPER_ORG_ID_) orgName
+
+		FROM sys_meeting
+		
+		WHERE DELETE_STATUS_ = 0
+
+		<if test="meetingTheme != null and meetingTheme != ''">
+			AND MEETING_THEME_ LIKE CONCAT('%',#{meetingTheme},'%')
+		</if>
+		
+		ORDER BY STARTTIME_ DESC
+		
+	</select>
+	
+	
+	<!-- 根据RoleType过滤会议条件 -->
+	<select id="listMeetingsByRoleType" parameterType="java.util.Map" resultType="java.util.Map">
+	
+		SELECT
+		<include refid="Base_Column_List"></include>
+		,(SELECT fullnames_ FROM tb_org org WHERE org.id_=SUPER_ORG_ID_) orgName
+
+		FROM sys_meeting
+		
+		WHERE DELETE_STATUS_ = 0
+		
+		AND id_ IN (
+				SELECT meet.ID_ FROM sys_meeting meet INNER JOIN tb_manager_role role ON meet.SUPER_ORG_ID_=role.orgId_
+					WHERE meet.DELETE_STATUS_=0 AND role.roleType_=1 AND role.managerId_=#{userId}
+				UNION 
+					SELECT meeting_id_ FROM sys_meeting_user WHERE user_id_ = #{userId} )
+
+		<if test="meetingTheme != null and meetingTheme != ''">
+			AND MEETING_THEME_ LIKE CONCAT('%',#{meetingTheme},'%')
+		</if>
+		
+		ORDER BY STARTTIME_ DESC
+		
+	</select>
+
+
+	<!-- 主键查询 -->
+	<select id="selectMeetingById" parameterType="java.lang.String" resultType="com.v4ward.meeting.model.SysMeeting">
+	
+		SELECT
+			<include refid="Base_Column_List"></include>
+			
+		FROM sys_meeting
+		where ID_ = #{id} AND DELETE_STATUS_ = 0
+		
+	</select>
+
+
+	<!-- 修改会议信息 -->
+	<update id="edit" parameterType="com.v4ward.meeting.model.SysMeeting" >
+	
+		UPDATE sys_meeting
+	    SET MEETING_THEME_ = #{meetingTheme,jdbcType=VARCHAR},
+	      STARTTIME_ = #{starttime,jdbcType=TIMESTAMP},
+	      ENDTIME_ = #{endtime,jdbcType=TIMESTAMP},
+	      MEETING_LOCATION_ = #{meetingLocation,jdbcType=VARCHAR},
+	      MEETING_STATUS_ = #{meetingStatus,jdbcType=TINYINT},
+<!-- 	      SUPER_USER_ID_ = #{superUserId,jdbcType=VARCHAR},
+ -->	      MEETING_BRIEF_ = #{meetingBrief,jdbcType=LONGVARCHAR},
+	      MEETING_NOTICE_ = #{meetingNotice,jdbcType=LONGVARCHAR},
+	      UPDATE_EMP_ = #{updateEmp,jdbcType=VARCHAR},
+	      UPDATE_TIME_ = #{updateTime,jdbcType=TIMESTAMP},
+	      VERSION = VERSION +1 
+	    WHERE ID_ = #{id,jdbcType=VARCHAR}
+	
+	</update>
+
+
+	<!-- 删除会议 -->
+	<delete id="deleteById" parameterType="String">
+	UPDATE sys_meeting
+	    SET DELETE_STATUS_ = 1 where ID_ = #{id}
+	</delete>
+	
+	
+	<!-- 获取超级用户角色对应的OrgId -->
+	<select id="getSuperRoleOrgId" parameterType="String" resultType="String">
+	
+		SELECT orgId_ FROM tb_manager_role WHERE managerId_=#{managerId} AND roleType_='1' 
+		
+	</select>
+	
+	
+	<!-- 获取会务管理员列表 -->
+	<select id="getMeetingManager" parameterType="String" resultType="java.util.Map">
+	
+		SELECT 
+		  C.ID_ id
+		  ,C.NAME_ name
+		  ,IF(D.ID_ IS NULL,0,1) isSelect
+		FROM
+		  (SELECT DISTINCT
+		    A.ID_,
+		    A.NAME_ 
+		  FROM
+		    TB_MANAGER A 
+		    INNER JOIN TB_MANAGER_ROLE B 
+		      ON A.ID_ = B.MANAGERID_ 
+		  WHERE B.ROLETYPE_ = '2' 
+		    AND A.STATUS_ = 1) C 
+		  LEFT JOIN SYS_MEETING_USER D 
+		    ON C.ID_ = D.USER_ID_ 
+		    AND d.MEETING_ID_ = #{meetingId}	
+	</select>
+	
+	
+	<!-- 根据会议id删除 会议管理员 -->
+	<delete id="deleteMeetingUserByMeetingId" parameterType="String">
+		
+		DELETE FROM SYS_MEETING_USER WHERE MEETING_ID_ = #{meetingId}
+	</delete>
+
+
+	<!-- 批量新增会议管理员 -->
+	<insert id="insertMeetingUserList" parameterType="java.util.List">
+
+		INSERT INTO sys_meeting_user (
+		ID_,
+		USER_ID_,
+		MEETING_ID_,
+		VERSION
+		)
+		VALUES
+
+		<foreach collection="list" item="meetingUser" index="index" separator=",">
+			(#{meetingUser.id},#{meetingUser.userId},#{meetingUser.meetingId},#{meetingUser.version})
+		</foreach>
+
+	</insert>
+	
+
+</mapper>

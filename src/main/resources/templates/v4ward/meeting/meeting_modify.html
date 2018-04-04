@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content">
+				<div class="form-horizontal" id="meetingInfoForm">
+
+					<input type="hidden" id="id" th:value="${meeting.id}">
+
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">会议主题</label>
+								<div class="col-sm-4">
+									<input class="form-control" id="meetingTheme" 
+										name="meetingTheme" type="text" th:value="${meeting.meetingTheme}">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">会议简介</label>
+								<div class="col-sm-10">
+									<textarea class='form-control' rows="2" id="meetingBrief" 
+										th:text="${meeting.meetingBrief}" name="meetingBrief"></textarea>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">开始时间</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control"	id="starttime" name="starttime" 
+									 th:value="${#dates.format(meeting.starttime, 'yyyy-MM-dd HH:mm:ss')}"/>
+								</div>
+
+								<label class="col-sm-2 control-label">结束时间</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control " id="endtime" name="endtime" 
+									 th:value="${#dates.format(meeting.endtime, 'yyyy-MM-dd HH:mm:ss')}" />
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">会议地点</label>
+								<div class="col-sm-4">
+									<input class="form-control" id="meetingLocation" th:value="${meeting.meetingLocation}"
+										name="meetingLocation" type="text">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">会议须知</label>
+								<div class="col-sm-10">
+									<textarea class='form-control' rows="5" id="meetingNotice" 
+									 th:text="${meeting.meetingNotice}"
+										name="meetingNotice"></textarea>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">会议状态</label>
+								<div class="col-sm-4">
+									<select id="meetingStatus" name="meetingStatus" class="form-control" disabled="disabled" >
+										<option value="0" th:selected="${meeting.meetingStatus==0}">创建</option>
+										<option value="1" th:selected="${meeting.meetingStatus==1}">完成</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row btn-group-m-t">
+				<div class="col-sm-10">
+					<button type="button" class="btn btn-info "
+						onclick="meetingInfoDlg.editSubmit()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;提交
+					</button>
+
+					<button type="button" class="btn btn-danger "
+						onclick="meetingInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	
+	
+
+
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/meeting/meeting_info.js"></script>
+
+<script>
+	//执行一个laydate实例
+ 	laydate.render({
+		elem : '#starttime' //指定元素
+	   ,type: 'datetime'
+	});
+	laydate.render({
+		elem : '#endtime' //指定元素
+	   ,type: 'datetime'
+	}); 
+</script>
+</body>
+</html>
+
+

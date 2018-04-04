@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h4>会议主题：<span style="color:red" th:text="${meetingTheme}"></span></h4>
+                <input type="hidden" id="meetingId"  th:value="${meetingId}"/>
+            </div>
+             
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                   
+	                    <div class="col-sm-2" th:each="manager : ${meetingManagers}">
+						    <input name="manager" type="checkbox" th:checked="${manager.isSelect==1}" th:value="${manager.id}"
+						    <span th:text="${manager.name}"></span></input>
+						</div>
+                    
+                    </div>
+                </div>
+             </div>
+             
+             <div class="row btn-group-m-t">
+				<div class="col-sm-10">
+					<button type="button" class="btn btn-info "
+						onclick="meetingInfoDlg.allotMeetingManager()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;提交
+					</button>
+
+					<button type="button" class="btn btn-danger "
+						onclick="meetingInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+                
+    </div>
+</div>
+</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/meeting/meeting_info.js"></script>
+</body>
+</html>

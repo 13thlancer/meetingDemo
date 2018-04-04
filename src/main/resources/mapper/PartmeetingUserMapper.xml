@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.meeting.dao.PartmeetingUserMapper">
+
+
+	<!-- 批量新增参会人员 导入 ,如果是重复数据就不导入 -->
+	<insert id="insertList" parameterType="java.util.List">
+
+		INSERT INTO SYS_PARTMEETING_USER (
+		  ID_,
+		  USER_ID_,
+		  PARTMEETING_ID_,
+		  HOTEL_INFO_,
+		  ROOM_INFO_,
+		  SEAT_INFO_,
+		  BIND_STATUS_,
+		  SIGN_STATUS_,
+		  VERSION
+		)
+		<foreach collection="list" item="partmeetingUser" index="index" separator=" UNION ALL ">
+			SELECT 
+				 #{partmeetingUser.id},#{partmeetingUser.userId},#{partmeetingUser.partmeetingId}
+				,#{partmeetingUser.hotelInfo},#{partmeetingUser.roomInfo},#{partmeetingUser.seatInfo}
+				,#{partmeetingUser.bindStatus},#{partmeetingUser.signStatus},#{partmeetingUser.version}
+			FROM
+			  DUAL 
+			WHERE NOT EXISTS 
+			  (SELECT 1 FROM sys_partmeeting_user WHERE USER_ID_ = #{partmeetingUser.userId} 
+			  		AND PARTMEETING_ID_ = #{partmeetingUser.partmeetingId})
+		
+		</foreach>
+	</insert>
+	
+	
+	<select id="selectUserIdByPhone" parameterType="string" resultType="string">
+		SELECT ID_ FROM TB_MANAGER WHERE ACCOUNT_ = #{phone} AND STATUS_ = 1
+	</select>
+	
+	
+	<!-- 查询签到信息 -->
+	<select id="listSignByPartmeetingId" parameterType="java.util.Map" 
+			resultType="com.v4ward.meeting.poiEntity.PartmeetingUserPoiEntity">
+		
+		SELECT 
+		  a.id_ id,
+		  b.account_ account,
+		  b.name_ name,
+		  b.id_ userId,
+		  a.HOTEL_INFO_ hotelInfo,
+		  a.ROOM_INFO_ roomInfo,
+		  a.SEAT_INFO_ seatInfo,
+		  a.BIND_STATUS_ bindStatus,
+		  a.SIGN_STATUS_ signStatus,
+		  DATE_FORMAT(a.SIGNTIME_, '%Y-%m-%d %T') signtime,
+		  (SELECT c.fullnames_ FROM tb_org c,tb_manager_org d WHERE c.id_ = d.orgId_ AND b.id_ = d.managerId_) orgName 
+		FROM
+		  sys_partmeeting_user a INNER JOIN tb_manager b 
+		ON a.USER_ID_ = b.id_ 
+		WHERE a.PARTMEETING_ID_ = #{partmeetingId}
+		
+		<if test="signStatus != null and signStatus != ''">
+		  AND a.SIGN_STATUS_ = #{signStatus}
+		</if>
+		<if test="account != null and account != ''">
+		  AND b.account_ LIKE CONCAT('%',#{account},'%')
+		</if>
+		<if test="name != null and name != ''">
+		  AND b.name_ LIKE CONCAT('%',#{name},'%')
+		</if>
+	
+	</select>
+	
+	
+	<!-- 请假 -->
+	<update id="leave" parameterType="string">
+	
+		UPDATE sys_partmeeting_user SET SIGN_STATUS_=3 WHERE ID_ = #{id} 
+	
+	</update>
+
+	<update id="updateMeetingUser" parameterType="com.v4ward.meeting.model.SysPartmeetingUser">
+
+			UPDATE
+			sys_partmeeting_user
+			SET
+			HOTEL_INFO_ = #{hotelInfo},
+			ROOM_INFO_ = #{roomInfo},
+			SEAT_INFO_ = #{seatInfo}
+			WHERE
+			ID_ = #{id}
+
+	</update>
+
+	
+	<!-- 根据userId查询 所有分会场列表 -->
+	<select id="listAttendRecordByUserId" parameterType="string" resultType="map">
+		
+		SELECT 
+		  b.PARTMEETING_TITLE_ 	partmeetingTitle,
+		  a.HOTEL_INFO_ 		hotelInfo,
+		  a.ROOM_INFO_ 			roomInfo,
+		  a.SEAT_INFO_ 			seatInfo,
+		  a.BIND_STATUS_ 		bindStatus,
+		  a.SIGN_STATUS_ 		signStatus,
+		  DATE_FORMAT(a.SIGNTIME_, '%Y-%m-%d %T') signtime 
+		FROM
+		  SYS_PARTMEETING_USER a 
+		  INNER JOIN SYS_PARTMEETING b 
+		    ON a.PARTMEETING_ID_ = b.ID_ 
+		WHERE a.USER_ID_ = #{userId}
+		ORDER BY b.STARTTIME_
+	
+	</select>
+	
+	
+	<select id="getPartmeetingUserIdByPartmeetingIdAndUserId" resultType="string">
+			
+			SELECT ID_ id
+			FROM SYS_PARTMEETING_USER
+			WHERE USER_ID_ = #{userId} AND PARTMEETING_ID_ = #{partmeetingId}
+			
+	</select>
+	
+	
+	<!--  导入 ,全部新增 -->
+	<insert id="userListInsert" parameterType="java.util.List">
+		INSERT INTO SYS_PARTMEETING_USER (
+		  ID_,
+		  USER_ID_,
+		  PARTMEETING_ID_,
+		  HOTEL_INFO_,
+		  ROOM_INFO_,
+		  SEAT_INFO_,
+		  BIND_STATUS_,
+		  SIGN_STATUS_,
+		  VERSION
+		) 
+		VALUES
+
+		<foreach collection="list" item="partmeetingUser" index="index" separator=",">
+		(
+			#{partmeetingUser.id},#{partmeetingUser.userId},#{partmeetingUser.partmeetingId}
+			,#{partmeetingUser.hotelInfo},#{partmeetingUser.roomInfo},#{partmeetingUser.seatInfo}
+			,#{partmeetingUser.bindStatus},#{partmeetingUser.signStatus},#{partmeetingUser.version}
+		)
+		</foreach>
+		
+	</insert>
+	
+	
+	<!-- 导入 ,全部修改 -->
+	<update id="userListUpdate" parameterType="java.util.List">
+
+		UPDATE SYS_PARTMEETING_USER
+		<trim prefix="SET" suffixOverrides=",">
+			<trim prefix=" HOTEL_INFO_ = CASE" suffix="END,">
+				<foreach collection="list" item="i" index="index">
+					WHEN ID_ = #{i.id} THEN #{i.hotelInfo}
+				</foreach>
+			</trim>
+			<trim prefix=" ROOM_INFO_ =CASE" suffix="END,">
+				<foreach collection="list" item="i" index="index">
+					WHEN ID_ = #{i.id} THEN #{i.roomInfo}
+				</foreach>
+			</trim>
+			<trim prefix=" SEAT_INFO_ =CASE" suffix="END,">
+				<foreach collection="list" item="i" index="index">
+					WHEN ID_ = #{i.id} THEN #{i.seatInfo}
+				</foreach>
+			</trim>
+		</trim>
+
+		WHERE ID_ IN
+		<foreach collection="list" separator="," item="i" index="index"
+			open="(" close=")">
+			#{i.id}
+		</foreach>
+
+	</update>
+	
+
+	<select id="getPartMeetingUserById" parameterType="string" resultType="com.v4ward.meeting.model.SysPartmeetingUser">
+		SELECT
+		  a.ID_                 id,
+		  a.HOTEL_INFO_ 		hotelInfo,
+		  a.ROOM_INFO_ 			roomInfo,
+		  a.SEAT_INFO_ 			seatInfo
+		FROM
+		  SYS_PARTMEETING_USER a
+		WHERE a.ID_ = #{id}
+	</select>
+
+	<delete id="delMeetingUser" parameterType="string">
+		DELETE  FROM  SYS_PARTMEETING_USER where ID_ = #{id}
+	</delete>
+
+	<delete id="delByPartmeetingIdAndUserId">
+		DELETE  FROM  SYS_PARTMEETING_USER where USER_ID_ = #{userId} AND PARTMEETING_ID_ = #{partmeetingId}
+	</delete>
+</mapper>

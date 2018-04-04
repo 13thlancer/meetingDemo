@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content">
+				<div class="form-horizontal" id="submeetingInfoForm">
+
+					<input type="hidden" id="id" th:value="${submeeting.id}" >
+
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">议程主题</label>
+								<div class="col-sm-10">
+									<input class="form-control" id="submeetingTheme" th:value="${submeeting.submeetingTheme}"
+										name="submeetingTheme" type="text">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">开始时间</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control"	id="starttime" name="starttime"
+									th:value="${#dates.format(submeeting.starttime, 'yyyy-MM-dd HH:mm:ss')}"/>
+								</div>
+
+								<label class="col-sm-2 control-label">结束时间</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control " id="endtime" name="endtime" 
+									th:value="${#dates.format(submeeting.endtime, 'yyyy-MM-dd HH:mm:ss')}"/>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">议程主持人</label>
+								<div class="col-sm-4">
+									<input class="form-control" id="submeetingHost" th:value="${submeeting.submeetingHost}"
+										name="submeetingHost" type="text">
+								</div>
+
+								<label class="col-sm-2 control-label">议程地点</label>
+								<div class="col-sm-4">
+									<input class="form-control" id="submeetingLocation" th:value="${submeeting.submeetingLocation}"
+										name="submeetingLocation" type="text"> 
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">议程状态</label>
+								<div class="col-sm-4">
+									<select id="submeetingStatus" name="submeetingStatus" class="form-control">
+										<option value="0" th:selected="${submeeting.submeetingStatus==0}">显示</option>
+										<option value="1" th:selected="${submeeting.submeetingStatus==1}">不显示</option>
+									</select>
+								</div>
+								
+								<label class="col-sm-2 control-label">排序号</label>
+								<div class="col-sm-4">
+									<input class="form-control" id="orderCode" th:value="${submeeting.orderCode}"
+										name="orderCode" type="number" placeholder="请输入整数默认1000"> 
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row btn-group-m-t">
+				<div class="col-sm-10">
+					<button type="button" class="btn btn-info "
+						onclick="submeetingInfoDlg.editSubmit()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;提交
+					</button>
+
+					<button type="button" class="btn btn-danger "
+						onclick="submeetingInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/submeeting/submeeting_info.js"></script>
+
+<script>
+	//执行一个laydate实例
+	laydate.render({
+		elem : '#starttime' //指定元素
+	   ,type: 'datetime'
+	});
+	laydate.render({
+		elem : '#endtime' //指定元素
+	   ,type: 'datetime'
+	});
+</script>
+</body>
+</html>
+
+

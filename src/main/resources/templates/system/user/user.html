@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+	<style type="text/css">
+		.file {
+			position: relative;
+			display: inline-block;
+			background: #D0EEFF;
+			border: 1px solid #99D3F5;
+			border-radius: 4px;
+			padding: 4px 12px;
+			overflow: hidden;
+			color: #1E88C7;
+			text-decoration: none;
+			text-indent: 0;
+			line-height: 20px;
+		}
+		.file input {
+			position: absolute;
+			font-size: 100px;
+			right: 0;
+			top: 0;
+			opacity: 0;
+		}
+		.file:hover {
+			background: #AADFFD;
+			border-color: #78C3F3;
+			color: #004974;
+			text-decoration: none;
+		}
+	</style>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>用户管理</h5>
+				</div>
+				<div class="ibox-content">
+					<div class="row row-lg">
+						<div class="col-sm-12">
+							<div class="row">
+								<div class="col-lg-12 col-sm-12">
+									<div class="row">
+										<div class="col-lg-12 col-sm-12">
+											<div class="row">
+												<div class="col-lg-4 col-sm-12">
+													<div class="input-group">
+														<div class="input-group-btn">
+															<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">用户名称
+															</button>
+														</div>
+														<input type="text" class="form-control" id="name" placeholder="帐号/姓名/手机号" />
+													</div>
+												</div>
+												<div class="col-lg-4 col-sm-6">
+													<div class="input-group">
+														<div class="input-group-btn">
+															<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">注册开始日期
+															</button>
+														</div>
+														<input type="text" class="form-control layer-date" id="beginTime"/>
+													</div>
+												</div>
+												<div class="col-lg-4 col-sm-6">
+													<div class="input-group">
+														<div class="input-group-btn">
+															<button data-toggle="dropdown" class="btn btn-white dropdown-toggle"
+																	type="button">注册结束日期
+															</button>
+														</div>
+														<input type="text" class="form-control layer-date"
+															   id="endTime"/>
+													</div>
+												</div>
+												<div class="col-lg-12 col-sm-12">
+													<div class="row">
+														<div class="col-lg-12 col-sm-12">
+															<button type="button" class="btn btn-primary " onclick="MgrUser.search()" >
+																<i class="fa fa-search"></i>&nbsp;搜索
+															</button>
+
+
+															<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.resetSearch()">
+																<i class="fa fa-trash"></i>&nbsp;重置
+															</button>
+
+															<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.excelModel()">
+																<i class="fa fa-download"></i>&nbsp;下载模版
+															</button>
+
+															<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.export()">
+																<i class="fa  fa-download"></i>&nbsp;导出
+															</button>
+
+
+															<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.selectFile()">
+																<i class="fa fa-file-excel-o"></i>&nbsp;选择文件
+															</button><span id="file"></span>
+
+															<form id="excel" style="display:none;" enctype="multipart/form-data" method="post" action="#" >
+																<input name="file" type="file" id="selectFile"/>
+															</form>
+
+															<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.importExcel()">
+																<i class="fa fa-upload"></i>&nbsp;导入
+															</button>
+
+
+
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="hidden-xs" id="managerTableToolbar" role="group">
+												<button type="button" class="btn btn-primary " onclick="MgrUser.openAddMgr()" >
+													<i class="fa fa-plus"></i>&nbsp;添加
+												</button>
+
+
+												<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.openChangeUser()" >
+													<i class="fa fa-edit"></i>&nbsp;修改
+												</button>
+
+
+												<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.delMgrUser()" >
+													<i class="fa fa-remove"></i>&nbsp;删除
+												</button>
+
+
+												<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.resetPwd()" >
+													<i class="fa fa-refresh"></i>&nbsp;重置密码
+												</button>
+
+
+												<!--<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.freezeAccount()" >
+													<i class="fa fa-warning"></i>&nbsp;冻结
+												</button>
+
+
+												<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.unfreeze()" >
+													<i class="fa fa-check-circle"></i>&nbsp;解除冻结
+												</button>
+-->
+
+												<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.roleAssign()" >
+													<i class="fa fa-user-secret"></i>&nbsp;角色分配
+												</button>
+
+												<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.orgAssign()" >
+													<i class="fa fa-user-secret"></i>&nbsp;组织分配
+												</button>
+
+												<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.listMobile()" >
+													<i class="fa fa-mobile"></i>&nbsp;查看手机号
+												</button>
+
+												<button type="button" class="btn btn-primary button-margin" onclick="MgrUser.initIm()" >
+													<i class="fa fa-mobile"></i>&nbsp;云信初始化
+												</button>
+											</div>
+											<table id="managerTable"/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/system/user/user.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.meeting.dao.MeetingRestMapper">
+
+	<select id="selectSysSubmeetingByPartmeetingId" parameterType="java.lang.String" resultType="com.v4ward.meeting.model.SysSubmeeting">
+		SELECT
+			ID_ id, 
+	      	PARTMEETING_ID_ partmeetingId, 
+	      	STARTTIME_ starttime, 
+	      	ENDTIME_ endtime, 
+	      	SUBMEETING_THEME_ submeetingTheme, 
+	      	SUBMEETING_HOST_ submeetingHost, 
+	      	SUBMEETING_LOCATION_ submeetingLocation, 
+	      	SUBMEETING_STATUS_ submeetingStatus, 
+	      	ORDER_CODE_ orderCode, 
+	      	CREATE_EMP_ createEmp, 
+	      	CREATE_TIME_ createTime,
+	      	UPDATE_EMP_ updateEmp,
+	      	UPDATE_TIME_ updateTime,
+	      	VERSION version
+		FROM SYS_SUBMEETING
+		WHERE PARTMEETING_ID_ = #{partmeetingId} AND SUBMEETING_STATUS_ = 0
+		ORDER BY ORDER_CODE_,STARTTIME_
+	</select>
+	
+	<select id="selectSysResourcesByPartmeetingId" parameterType="java.lang.String" resultType="com.v4ward.meeting.model.SysResources">
+		SELECT
+			ID_ id, 
+	      	PARTMEETING_ID_ partmeetingId, 
+	      	RESOURCES_TITLE_ resourcesTitle, 
+	      	RESOURCES_TYPE_ resourcesType, 
+	      	RESOURCES_SIZE_ resourcesSize, 
+	      	RESOURCES_PATH_ resourcesPath, 
+	      	RESOURCES_STATUS_ resourcesStatus, 
+	      	ORDER_CODE_ orderCode, 
+	      	CREATE_EMP_ createEmp, 
+	      	CREATE_TIME_ createTime,
+	      	UPDATE_EMP_ updateEmp,
+	      	UPDATE_TIME_ updateTime,
+	      	VERSION version
+		FROM SYS_RESOURCES
+		WHERE PARTMEETING_ID_ = #{partmeetingId}
+		ORDER BY ORDER_CODE_ ,CREATE_TIME_
+	</select>
+	
+	<select id="selectMeetingByPartmeetingId" parameterType="java.lang.String" resultType="com.v4ward.meeting.model.SysMeeting">
+		SELECT
+			A.ID_ id,
+			A.MEETING_THEME_ meetingTheme,
+			A.STARTTIME_ starttime,
+			A.ENDTIME_ endtime,
+			A.MEETING_LOCATION_ meetingLocation,
+			A.MEETING_STATUS_ meetingStatus,
+			A.SUPER_ORG_ID_ superOrgId,
+		    A.CREATE_EMP_ createEmp,
+		    A.CREATE_TIME_ createTime,
+		    A.UPDATE_EMP_ updateEmp,
+		    A.UPDATE_TIME_ updateTime,
+		    A.VERSION version,
+			A.MEETING_BRIEF_ meetingBrief,
+			A.MEETING_NOTICE_ meetingNotice,
+			A.DELETE_STATUS_ deleteStatus
+		FROM SYS_MEETING A,SYS_PARTMEETING B
+		WHERE A.ID_ = B.MEETING_ID_ AND A.DELETE_STATUS_ = 0 AND B.ID_ = #{partmeetingId}
+	</select>
+	
+	<select id="selectCurrentPartmeeting" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			B.ID_ partmeetingId,
+			B.STARTTIME_ timestamp,
+			DATE_FORMAT(B.STARTTIME_,'%Y.%c.%e') date,
+			DATE_FORMAT(B.STARTTIME_,'%k:%i') time,
+			B.PARTMEETING_LOCATION_ location,
+			B.PARTMEETING_TITLE_ subject,
+			B.LINE_NUM_ lineNo,
+			A.SIGN_STATUS_ status,
+			IFNULL(A.SEAT_INFO_,'') seat
+		FROM SYS_PARTMEETING_USER A,SYS_PARTMEETING B 
+		WHERE A.PARTMEETING_ID_ = B.ID_ 
+			AND A.USER_ID_ = #{userId}
+			<if test="currentTime != null and currentTime != ''">
+				AND B.ENDTIME_ &gt;= #{currentTime} 
+			</if> 
+			<if test="lineNo != null and lineNo != ''">
+				AND B.LINE_NUM_ &gt;= #{lineNo} 
+			</if> 
+			AND (B.PARTMEETING_STATUS_ = 1 OR B.PARTMEETING_STATUS_ = 3)
+		ORDER BY B.LINE_NUM_ LIMIT 0, 10
+	</select>
+	
+	<select id="selectHistoryPartmeeting" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			B.ID_ partmeetingId,
+			B.STARTTIME_ timestamp,
+			DATE_FORMAT(B.STARTTIME_,'%Y.%c.%e') date,
+			DATE_FORMAT(B.STARTTIME_,'%k:%i') time,
+			B.PARTMEETING_LOCATION_ location,
+			B.PARTMEETING_TITLE_ subject,
+			B.LINE_NUM_ lineNo,
+			A.SIGN_STATUS_ status
+		FROM SYS_PARTMEETING_USER A,SYS_PARTMEETING B 
+		WHERE A.PARTMEETING_ID_ = B.ID_ 
+			AND A.USER_ID_ = #{userId} 
+			<if test="lineNo != null and lineNo != ''">
+				AND B.LINE_NUM_ &lt;= #{lineNo} 
+			</if>
+			AND B.PARTMEETING_STATUS_ = 3
+		ORDER BY B.LINE_NUM_ DESC LIMIT 0, 10
+	</select>
+	
+	<select id="selectSysPartmeetingUser" parameterType="java.util.Map" resultType="com.v4ward.meeting.model.SysPartmeetingUser">
+		SELECT
+			ID_ id, 
+			MANAGER_ID_ managerId, 
+			USER_ID_ userId, 
+	      	PARTMEETING_ID_ partmeetingId, 
+	      	HOTEL_INFO_ hotelInfo, 
+	      	ROOM_INFO_ roomInfo, 
+	      	SEAT_INFO_ seatInfo, 
+	      	BIND_STATUS_ bindStatus, 
+	      	SIGN_STATUS_ signStatus, 
+	      	SIGNTIME_ signtime, 
+	      	LINE_NUM_ lineNum, 
+	      	CREATE_EMP_ createEmp, 
+	      	CREATE_TIME_ createTime,
+	      	UPDATE_EMP_ updateEmp,
+	      	UPDATE_TIME_ updateTime,
+	      	VERSION version
+		FROM SYS_PARTMEETING_USER
+		WHERE PARTMEETING_ID_ = #{partmeetingId} AND LINE_NUM_ &gt;= #{lineNo}
+		<if test="signStatus != null and signStatus != ''">
+			AND SIGN_STATUS_ = #{signStatus}
+		</if>
+		ORDER BY LINE_NUM_ LIMIT 0, 10
+	</select>
+
+</mapper>

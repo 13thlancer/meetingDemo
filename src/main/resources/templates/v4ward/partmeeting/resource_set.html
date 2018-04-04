@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content">
+				<div class="form-horizontal" id="resourceInfoForm">
+				
+					<input type="hidden" id="id" th:value="${resource.id}" >
+
+					<div class="row">
+						<div class="col-xs-12">
+						
+						<div class="form-group">
+								<label class="col-xs-2 control-label">文件名</label>
+								<div class="col-xs-10">
+								<input class="form-control" id="resourcesTitle" th:value="${resource.resourcesTitle}"
+										name="resourcesTitle" disabled="disabled"> 
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-xs-2 control-label">不签到查看</label>
+								<div class="col-xs-4">
+									<select id="resourcesStatus" name="resourcesStatus" class="form-control " >
+										<option value="0" th:selected="${resource.resourcesStatus==0}">允许</option>
+										<option value="1" th:selected="${resource.resourcesStatus==1}">不允许</option>
+									</select>
+								</div>
+								
+								<label class="col-xs-2 control-label">排序号</label>
+								<div class="col-xs-4">
+									<input class="form-control" id="orderCode" th:value="${resource.orderCode}"
+										name="orderCode" type="number" placeholder="请输入整数默认1000"> 
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row btn-group-m-t">
+				<div class="col-sm-10">
+					<button type="button" class="btn btn-info "
+						onclick="resourceInfoDlg.editSubmit()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;提交
+					</button>
+
+					<button type="button" class="btn btn-danger "
+						onclick="resourceInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/partmeeting/upload.js"></script>
+
+<script>
+
+$(function () {
+    Feng.initValidator("resourceInfoForm", resourceInfoDlg.validateFields);
+});
+</script>
+</body>
+</html>
+
+

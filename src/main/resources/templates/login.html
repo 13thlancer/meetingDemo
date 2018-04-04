@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>南方智会 - 登录</title>
+
+    <link rel="shortcut icon" href="/static/favicon.ico" />
+    <link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet" />
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet" />
+    <link href="/css/animate.css" rel="stylesheet" />
+    <link href="/css/style.css?v=4.1.0" rel="stylesheet" />
+    <script>if (window.top !== window.self) {
+        window.top.location = window.location;
+    }</script>
+    <script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.6"></script>
+</head>
+
+<body class="gray-bg">
+
+<div class="middle-box text-center loginscreen  animated fadeInDown">
+
+    <div style="width: 700px; margin-left: -200px;margin-top:100px;">
+        <h1 class="logo-name" style="font-size: 120px;letter-spacing:0px;">南方智会</h1>
+    </div>
+    <div style="margin-top:30px;">
+        <!--<h3 th:text="#{welcome}"></h3>-->
+        <h3>欢迎使用中冶南方智能会议管理系统</h3>
+        <br/>
+        <h4 style="color: red;" th:text="${tips}"></h4>
+        <form class="m-t" role="form" action="/login" method="post">
+            <div class="form-group">
+                <input type="text" name="username" class="form-control" placeholder="用户名" required=""/>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="密码" required=""/>
+            </div>
+            <!--<div class="form-group">-->
+                <!--<img onclick = "this.src='/defaultKaptcha?d='+new Date()*1" src="/defaultKaptcha" />-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+                <!--<input type="text" name="verified" class="form-control" placeholder="验证码" required=""/>-->
+            <!--</div>-->
+
+         <!--   <div class="form-group" style="float: left;">
+                <div class="checkbox" style="text-align: left">
+                    <label>
+                        <input type="checkbox" name="remember" style="margin-top: 2px;" />记住我
+                    </label>
+                </div>
+            </div>-->
+            <button type="submit" class="btn btn-primary block full-width m-b">登 录</button>
+        </form>
+
+<!--
+        <form role="form" action="/i18n/changeSessionLanguage" method="post">
+
+            <input name="lang" type="hidden" value="zh"  />
+
+            <button onclick="changeLanguage()">切换为中文</button>
+
+        </form>
+
+        <form role="form" action="/i18n/changeSessionLanguage" method="post">
+
+            <input name="lang" type="hidden" value="en" />
+
+            <button onclick="changeLanguage()">切换为英文</button>
+
+        </form>-->
+    </div>
+</div>
+
+</body>
+
+</html>

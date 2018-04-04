@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.meeting.dao.ResourcesMapper">
+
+
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.v4ward.meeting.model.SysResources">
+		insert into sys_resources (ID_, PARTMEETING_ID_, RESOURCES_TITLE_, 
+	      RESOURCES_TYPE_, RESOURCES_SIZE_, RESOURCES_STATUS_, 
+	      CREATE_EMP_, CREATE_TIME_, UPDATE_EMP_, 
+	      UPDATE_TIME_, VERSION, RESOURCES_PATH_,
+	      ORDER_CODE_
+	      )
+	    values (#{id,jdbcType=VARCHAR}, #{partmeetingId,jdbcType=VARCHAR}, #{resourcesTitle,jdbcType=VARCHAR}, 
+	      #{resourcesType,jdbcType=VARCHAR}, #{resourcesSize,jdbcType=DOUBLE}, #{resourcesStatus,jdbcType=TINYINT}, 
+	      #{createEmp,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateEmp,jdbcType=VARCHAR}, 
+	      #{updateTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER}, #{resourcesPath,jdbcType=LONGVARCHAR},
+	      #{orderCode,jdbcType=INTEGER}
+	      )
+	</insert>
+
+
+	<!-- 查询分会场列表 -->
+	<select id="listResourcesByPartmeetingId" parameterType="java.util.Map" resultType="java.util.Map">
+	
+		SELECT
+			id_ 				id,
+			RESOURCES_TITLE_  	resourcesTitle,
+			RESOURCES_TYPE_	 	esourcesType,
+			RESOURCES_SIZE_ 	resourcesSize,
+			RESOURCES_PATH_ 	resourcesPath,
+			RESOURCES_STATUS_ 	resourcesStatus,
+			ORDER_CODE_ 		orderCode
+
+		FROM sys_resources
+		
+		WHERE PARTMEETING_ID_ = #{partmeetingId}
+
+		ORDER BY ORDER_CODE_ ,CREATE_TIME_
+		
+	</select>
+	
+	
+	<!-- 根据id查询材料信息 -->
+	<select id="getResource" parameterType="string" resultType="com.v4ward.meeting.model.SysResources">
+	
+		SELECT
+			id_ 				id,
+ 			RESOURCES_TITLE_  	resourcesTitle,
+		<!--			
+			RESOURCES_TYPE_	 	esourcesType,
+			RESOURCES_SIZE_ 	resourcesSize,  
+													-->
+			RESOURCES_PATH_ 	resourcesPath, 
+			RESOURCES_STATUS_ 	resourcesStatus,
+			ORDER_CODE_ 		orderCode
+
+		FROM sys_resources
+		
+		WHERE ID_ = #{id}
+
+	</select>
+
+
+	<!-- 修改分信息 -->
+ 	<update id="editResource" parameterType="com.v4ward.meeting.model.SysMeeting" >
+
+	UPDATE 
+		SYS_RESOURCES
+	SET
+		ORDER_CODE_ = #{orderCode,jdbcType=VARCHAR},
+		RESOURCES_STATUS_ = #{resourcesStatus,jdbcType=TINYINT},
+		UPDATE_EMP_ = #{updateEmp,jdbcType=VARCHAR},
+		UPDATE_TIME_ = #{updateTime,jdbcType=TIMESTAMP},
+		VERSION = VERSION +1
+	where ID_ = #{id,jdbcType=VARCHAR}
+	
+	</update>
+
+
+	<!-- 删除会议材料 -->
+	<delete id="deleteById" parameterType="String">
+		DELETE FROM SYS_RESOURCES WHERE ID_ = #{id}
+	</delete>
+	
+	
+</mapper>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>组织管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle"
+                                                type="button">组织名称
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control" id="orgName" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="button" class="btn btn-primary " onclick="Org.search()" id="">
+                                    <i class="fa fa-search"></i>&nbsp;搜索
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="menuTableToolbar" role="group">
+
+                            <button type="button" class="btn btn-primary " onclick="Org.openAddOrg()">
+                                <i class="fa fa-plus"></i>&nbsp;添加
+                            </button>
+
+                            <button type="button" class="btn btn-primary button-margin" onclick="Org.openChangeOrg()">
+                                <i class="fa fa-edit"></i>&nbsp;修改
+                            </button>
+
+
+                            <button type="button" class="btn btn-primary button-margin" onclick="Org.delOrg()">
+                                <i class="fa fa-remove"></i>&nbsp;删除
+                            </button>
+
+                            <button type="button" class="btn btn-primary button-margin" onclick="Org.upSeq()">
+                                <i class="fa fa-long-arrow-up"></i>&nbsp;上移
+                            </button>
+
+                            <button type="button" class="btn btn-primary button-margin" onclick="Org.downSeq()">
+                                <i class="fa  fa-long-arrow-down"></i>&nbsp;下移
+                            </button>
+
+                            <button type="button" class="btn btn-primary button-margin" onclick="Org.excelModel()">
+                                <i class="fa fa-download"></i>&nbsp;下载模版
+                            </button>
+
+                            <button type="button" class="btn btn-primary button-margin" onclick="Org.export()">
+                                <i class="fa fa-download"></i>&nbsp;导出
+                            </button>
+
+                            <button type="button" class="btn btn-primary button-margin" onclick="Org.selectFile()">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;选择文件
+                            </button><span id="file"></span>
+
+                            <form id="excel" style="display:none;" enctype="multipart/form-data" method="post" action="#" >
+                                <input name="file" type="file" id="selectFile"/>
+                            </form>
+                            <button type="button" class="btn btn-primary button-margin" onclick="Org.importExcel()">
+                                <i class="fa fa-upload"></i>&nbsp;导入
+                            </button>
+
+                        </div>
+                        <table id="orgTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/system/org/org.js"></script>
+
+</body>
+</html>

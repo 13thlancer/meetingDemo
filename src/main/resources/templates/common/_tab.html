@@ -1,0 +1,53 @@
+<nav th:fragment="_tab" class="navbar-default navbar-static-side" role="navigation">
+    <div class="nav-close"><i class="fa fa-times-circle"></i>
+    </div>
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <span></span>
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <span class="clear">
+                        <span class="block m-t-xs"><strong class="font-bold" th:text="${session.manager.name}"></strong></span>
+                        <span class="text-muted text-xs block"><b class="caret"></b></span>
+
+                        <input id="menus" type="hidden" th:value="${session.menus}" />
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu animated fadeInRight m-t-xs">
+<!--
+                        <li><a class="J_menuItem" href="/mgr/user_info">个人资料</a></li>
+-->
+                        <li><a class="J_menuItem" href="/mgr/user_chpwd">修改密码</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/logout">安全退出</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="logo-element">AS
+                </div>
+            </li>
+                <!--    <li>
+                        <a href="#">
+                            <i class="fa"></i>
+                            <span class="nav-label">权限管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="/toUser" name="tabMenuItem">用户管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="/toRole" name="tabMenuItem">角色管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="/toMenu" name="tabMenuItem">菜单管理</a>
+                            </li>
+                        </ul>
+                    </li>-->
+
+        </ul>
+    </div>
+</nav>
+
+

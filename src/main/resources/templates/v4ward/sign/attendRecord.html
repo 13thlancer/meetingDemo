@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link">
+<head>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+				<!-- 	<div class="ibox-title">
+						<h5>参会记录</h5>
+					</div> -->
+						<input type="hidden" id="userId" th:value="${userId}">
+					<div class="ibox-content">
+						<table id="attendRecordTable" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script >
+
+var attendRecord = {
+	    id: "attendRecordTable",	//表格id
+	    seItem: null,		//选中的条目
+	    table: null,
+	    layerIndex: -1
+	};
+
+	$(function() {
+		
+	    var defaultColunms = attendRecord.initColumn();
+	    var table = new BSTable(attendRecord.id, "/sign/listAttendRecord", defaultColunms);
+	    table.setPaginationType("server");
+	    table.setQueryParams(attendRecord.queryParams());
+	    table.isShowColumns(false);
+	    table.isShowRefresh(false);
+	    table.setHeight(326);
+	    table.setPageSize(6);
+	    attendRecord.table = table.init();
+	});
+
+	attendRecord.queryParams = function(){
+		var queryData = {};
+		queryData['userId'] = $("#userId").val();
+		return queryData;
+	}
+	/**
+	 * 初始化表格的列
+	 */
+	 attendRecord.initColumn = function () {
+		return columns = [
+	              {title: '分会场主题', field: 'partmeetingTitle', align: 'center', valign: 'middle', sortable: true},
+	              {title: '酒店信息', field: 'hotelInfo', align: 'center', valign: 'middle', sortable: true},
+	              {title: '房间信息', field: 'roomInfo', align: 'center', valign: 'middle', sortable: true},
+	              {title: '座位信息', field: 'seatInfo', align: 'center', valign: 'middle', sortable: true},
+	              {title: '签到时间', field: 'signtime', align: 'center', valign: 'middle', sortable: true},
+	              {title: '签到类型', field: 'bindStatus', align: 'center', valign: 'middle', sortable: true,width:'10%',
+	              	formatter:function(value, row, index){
+	              		return 0==value?'后台导入':1==value?'扫码绑定':'-';
+	              	}
+	              },
+	              {title: '签到状态', field: 'signStatus', align: 'center', valign: 'middle', sortable: true,width:'10%',
+	              	formatter:function(value, row, index){
+	              		return 0==value?'未签到':1==value?'已签到':2==value?'迟到':3==value?'请假':'-';
+	              	}
+	              }
+	              ];
+	};
+
+</script>
+
+</body>
+</html>

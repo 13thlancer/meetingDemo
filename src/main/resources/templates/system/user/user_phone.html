@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <input id="userId" type="hidden" th:value="${userId}" />
+            <div class="row">
+                <table id="phoneTable"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/system/user/user_phone.js"></script>
+
+</body>
+</html>

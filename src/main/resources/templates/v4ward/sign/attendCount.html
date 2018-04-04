@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link">
+<head>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>参会统计</h5>
+					</div>
+					<div class="ibox-content">
+						<div class="row row-lg">
+							<div class="col-sm-12">
+								<div class="row">
+									<div class=" col-sm-6">
+										<div class="input-group">
+											<div class="input-group-btn">
+												<button data-toggle="dropdown"
+													class="btn btn-white dropdown-toggle" type="button">用户名称
+												</button>
+											</div>
+											<input type="text" class="form-control" id="name"
+												placeholder="帐号/姓名/手机号" />
+										</div>
+									</div>
+									<div class=" col-sm-6">
+										<button type="button" class="btn btn-primary "
+											onclick="attend.search()">
+											<i class="fa fa-search"></i>&nbsp;搜索
+										</button>
+										<button type="button" class="btn btn-primary button-margin"
+											onclick="attend.reset()">
+											<i class="fa fa-trash"></i>&nbsp;重置
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hidden-xs" id="attendTableToolbar" role="group">
+							<button type="button" class="btn btn-primary "
+								onclick="attend.openAttend()">
+								<i class="fa fa-list"></i>&nbsp;参会记录
+							</button>
+						</div>
+						<table id="attendTable" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/sign/attendCount.js"></script>
+
+</body>
+</html>

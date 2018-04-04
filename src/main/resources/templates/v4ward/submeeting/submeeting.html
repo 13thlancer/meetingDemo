@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>分会场主题：<span style="color:red" th:text="${partmeetingTitle}"></span></h5>
+                <input type="hidden" id="partmeetingId"  th:value="${partmeetingId}"/>
+                
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle"
+                                                type="button">议程主题：
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control" id="submeetingTheme" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" class="btn btn-primary " onclick="submeeting.search()">
+                                    <i class="fa fa-search"></i>&nbsp;搜索
+                                </button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" class="btn btn-primary " onclick="submeeting.reset()">
+                                    <i class="fa fa-eraser"></i>&nbsp;重置
+                                </button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" class="btn btn-danger " onclick="javascript:history.back(-1);">
+                                    <i class="fa fa-arrow-left"></i>&nbsp;返回
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="submeetingTableToolbar" role="group">
+
+                            <button type="button" class="btn btn-primary " onclick="submeeting.openAddSubmeeting()">
+                                <i class="fa fa-plus"></i>&nbsp;议程录入
+                            </button>
+                            <button type="button" class="btn btn-primary button-margin" onclick="submeeting.modify()">
+                                <i class="fa fa-pencil"></i>&nbsp;修改
+                            </button>
+                            <button type="button" class="btn btn-danger button-margin" onclick="submeeting.del()">
+                                <i class="fa fa-trash"></i>&nbsp;删除
+                            </button>
+                            <button type="button" class="btn btn-primary button-margin" onclick="submeeting.view()">
+                                <i class="fa fa-eye"></i>&nbsp;查看
+                            </button>
+                        </div>
+                        <table id="submeetingTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/submeeting/submeeting.js"></script>
+</body>
+</html>

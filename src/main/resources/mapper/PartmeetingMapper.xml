@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.meeting.dao.PartmeetingMapper">
+
+
+	<sql id="Base_Column_List" >
+	
+		ID_ 					id,
+		PARTMEETING_TITLE_ 		partmeetingTitle,
+		MEETING_ID_				meetingId,
+		STARTTIME_ 				starttime,
+		ENDTIME_ 				endtime,
+		EARLYTIME_				earlytime,
+		LATESTTIME_				latesttime,
+		PARTMEETING_LOCATION_ 	partmeetingLocation,
+		PARTMEETING_HOST_		partmeetingHost,
+		SCAN_STATUS_			scanStatus,
+		PARTMEETING_STATUS_ 	partmeetingStatus,
+		LINE_NUM_				lineNum,
+		DELETE_STATUS_ 			deleteStatus,
+	    CREATE_EMP_ 			createEmp,
+	    CREATE_TIME_ 			createTime,
+	    UPDATE_EMP_ 			updateEmp,
+	    UPDATE_TIME_ 			updateTime,
+	    VERSION 				version
+	    
+	</sql>
+	
+	
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.v4ward.meeting.model.SysPartmeeting">
+		INSERT INTO SYS_PARTMEETING (ID_, PARTMEETING_TITLE_, MEETING_ID_, 
+	      STARTTIME_, ENDTIME_, EARLYTIME_, 
+	      LATESTTIME_, PARTMEETING_LOCATION_, PARTMEETING_HOST_, 
+	      SCAN_STATUS_, PARTMEETING_STATUS_, 
+<!-- 	      LINE_NUM_,   -->
+	      DELETE_STATUS_, CREATE_EMP_, CREATE_TIME_, 
+	      UPDATE_EMP_, UPDATE_TIME_, VERSION
+	      )
+	    VALUES (#{id,jdbcType=VARCHAR}, #{partmeetingTitle,jdbcType=VARCHAR}, #{meetingId,jdbcType=VARCHAR}, 
+	      #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, #{earlytime,jdbcType=TIMESTAMP}, 
+	      #{latesttime,jdbcType=TIMESTAMP}, #{partmeetingLocation,jdbcType=VARCHAR}, #{partmeetingHost,jdbcType=VARCHAR}, 
+	      #{scanStatus,jdbcType=TINYINT}, #{partmeetingStatus,jdbcType=TINYINT},
+<!-- 	       #{lineNum,jdbcType=INTEGER}, 	 -->
+	      #{deleteStatus,jdbcType=TINYINT}, #{createEmp,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+	      #{updateEmp,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER}
+	      )
+	</insert>
+
+
+	<!-- 查询分会场列表 -->
+	<select id="listPartmeetings" parameterType="java.util.Map" resultType="java.util.Map">
+	
+		SELECT
+		<include refid="Base_Column_List"></include>
+
+		FROM sys_partmeeting
+		
+		WHERE DELETE_STATUS_ = 0 and MEETING_ID_ = #{meetingId}
+
+		<if test="partmeetingTitle != null and partmeetingTitle != ''">
+			AND PARTMEETING_TITLE_ LIKE CONCAT('%',#{partmeetingTitle},'%')
+		</if>
+		
+		ORDER BY STARTTIME_ DESC
+		
+	</select>
+
+
+	<!-- 主键查询 -->
+	<select id="selectPartmeetingById" parameterType="java.lang.String" resultType="com.v4ward.meeting.model.SysPartmeeting">
+	
+		SELECT
+			<include refid="Base_Column_List"></include>
+			
+		FROM sys_partmeeting
+		where ID_ = #{id} AND DELETE_STATUS_ = 0
+		
+	</select>
+
+
+	<!-- 修改分会场信息 -->
+	<update id="edit" parameterType="com.v4ward.meeting.model.SysMeeting" >
+	
+	   UPDATE SYS_PARTMEETING
+	    SET PARTMEETING_TITLE_ = #{partmeetingTitle,jdbcType=VARCHAR},
+	      STARTTIME_ = #{starttime,jdbcType=TIMESTAMP},
+	      ENDTIME_ = #{endtime,jdbcType=TIMESTAMP},
+	      EARLYTIME_ = #{earlytime,jdbcType=TIMESTAMP},
+	      LATESTTIME_ = #{latesttime,jdbcType=TIMESTAMP},
+	      PARTMEETING_LOCATION_ = #{partmeetingLocation,jdbcType=VARCHAR},
+	      PARTMEETING_HOST_ = #{partmeetingHost,jdbcType=VARCHAR},
+	      SCAN_STATUS_ = #{scanStatus,jdbcType=TINYINT},
+	      PARTMEETING_STATUS_ = #{partmeetingStatus,jdbcType=TINYINT},
+	      UPDATE_EMP_ = #{updateEmp,jdbcType=VARCHAR},
+	      UPDATE_TIME_ = #{updateTime,jdbcType=TIMESTAMP},
+	      VERSION = VERSION +1 
+	    where ID_ = #{id,jdbcType=VARCHAR}
+	
+	</update>
+
+
+	<!-- 删除分会场 -->
+	<delete id="deleteById" parameterType="String">
+	UPDATE SYS_PARTMEETING
+	    SET DELETE_STATUS_ = 1 where ID_ = #{id}
+	</delete>
+	
+	
+	<!-- 根据分会场状态修改会议状态 -->
+	<update id="checkMeetingStatusComplete" parameterType="string" >
+		<![CDATA[
+			UPDATE 
+			  sys_meeting 
+			SET
+			  MEETING_STATUS_ = IF (
+			    (SELECT 
+			      COUNT(*) 
+			    FROM
+			      sys_partmeeting part 
+			    WHERE part.MEETING_ID_ = #{meetingId} 
+			      AND part.PARTMEETING_STATUS_  <> 3 
+			      AND part.DELETE_STATUS_ = 0)  >  0, 0, 1) 
+			WHERE ID_ = #{meetingId} AND DELETE_STATUS_ = 0 
+		]]>
+	</update>
+	
+
+</mapper>

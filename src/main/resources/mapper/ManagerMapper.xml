@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.core.dao.ManagerMapper">
+
+
+    <insert id="insertManager" parameterType="com.v4ward.core.model.Manager">
+        <selectKey keyProperty="id" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        INSERT INTO tb_manager
+        (id_,account_,password_,salt_,name_,status_,phone_,position_,isopenim_,create_Emp_,create_Time_)
+        values
+        (#{id},#{account},#{password},#{salt},#{name},#{status},#{phone},#{position},0,#{createemp},now())
+    </insert>
+
+    <insert id="insertManagerPoi" parameterType="com.v4ward.core.poiEntity.ManagerPoiEntity">
+        INSERT INTO tb_manager
+        (id_,account_,password_,salt_,name_,status_,phone_,position_,isopenim_,create_Emp_,create_Time_)
+        values
+        (#{id},#{account},#{password},#{salt},#{name},#{status},#{phone},#{position},0,#{createemp},now())
+    </insert>
+
+    <insert id="insertManagerErrorDataPoi" parameterType="com.v4ward.core.poiEntity.ManagerPoiEntity">
+        <selectKey keyProperty="id" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        INSERT INTO tb_manager_error_data
+        (id_,account_,password_,salt_,name_,orgnum_,status_,phone_,position_,create_Emp_,create_Time_)
+        values
+        (#{id},#{account},#{password},#{salt},#{name},#{orgNum},#{status},#{phone},#{position},#{createemp},now())
+    </insert>
+
+    <insert id="insertManagerRole" parameterType="com.v4ward.core.model.ManagerRole">
+        <selectKey keyProperty="id" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        INSERT INTO tb_manager_role
+        (id_,managerId_,roleId_,orgId_,roleType_)
+        values
+        (#{id},#{managerId},#{roleId},#{orgId},#{roleType})
+    </insert>
+
+    <insert id="insertManagerOrg" parameterType="com.v4ward.core.model.ManagerOrg">
+        <selectKey keyProperty="id" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        INSERT INTO tb_manager_org
+        (id_,managerId_,orgId_)
+        values
+        (#{id},#{managerId},#{orgId})
+    </insert>
+
+    <insert id="insertManagerUsedPhone" parameterType="com.v4ward.core.model.ManagerUsedPhone">
+        <selectKey keyProperty="id" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        INSERT INTO tb_manager_usedphone
+        (id_,managerId_,usedPhone_,start_time_,end_time_)
+        values
+        (#{id},#{managerId},#{usedPhone},#{startTime},now())
+    </insert>
+
+    <select id="selectUserPhoneById" parameterType="String" resultType="map">
+        SELECT
+        mu.id_ id,
+        m.name_ name,
+        mu.usedPhone_ phone,
+        date_format(mu.start_time_, '%Y-%m-%d %H:%i:%s') startTime,
+        date_format(mu.end_time_, '%Y-%m-%d %H:%i:%s') endTime
+        FROM
+        tb_manager_usedphone mu
+        LEFT JOIN
+        tb_manager m
+        ON mu.managerId_ = m.id_
+        WHERE mu.managerId_ = #{id}
+    </select>
+
+    <select id="getByAccount" parameterType="String" resultType="com.v4ward.core.model.Manager">
+        SELECT
+          account_ account,
+          name_ name,
+          password_ password,
+          salt_ salt,
+          phone_ phone,
+          mail_ mail,
+          position_ position
+        FROM tb_manager m
+        WHERE
+        account_ = #{account}
+    </select>
+
+    <select id="selectUsersNoIm" resultType="com.v4ward.core.model.Manager">
+        SELECT
+          id_ id,
+          account_ account,
+          name_ name,
+          password_ password,
+          salt_ salt,
+          phone_ phone,
+          mail_ mail,
+          position_ position
+        FROM tb_manager m
+        WHERE
+        isopenim_ = 0
+    </select>
+
+
+    <select id="getRoleNameById" parameterType="String" resultType="String">
+        SELECT
+          a.name_ name
+        FROM tb_role a
+        left JOIN tb_manager_role b
+        on a.num_ = b.roleId_
+        WHERE
+        b.managerId_ = #{id}
+    </select>
+
+    <select id="getByUserId" parameterType="String" resultType="com.v4ward.core.model.Manager">
+        SELECT
+        id_ id,
+        account_ account,
+        password_ password,
+        salt_ salt,
+        name_ name,
+        phone_ phone,
+        url_ url,
+        imname_ imName,
+        imtoken_ imToken,
+        position_ position,
+        create_Time_ createtime
+        FROM tb_manager
+        WHERE
+        id_ = #{id}
+    </select>
+
+
+    <select id="selectUsers" resultType="map">
+        select
+        DISTINCT
+        m.id_ id,
+        m.account_ account,
+        m.name_ name,
+        m.phone_ phone,
+        m.position_ position,
+        date_format(m.create_Time_, '%Y-%m-%d %H:%i:%s') createtime,
+        o.fullNames_ orgName,
+        m.status_ status
+        from tb_manager m
+        LEFT join tb_manager_org mo
+        on m.id_ = mo.managerId_
+        LEFT JOIN tb_org o
+        ON o.id_ = mo.orgId_
+        where
+        m.status_ != 3
+        AND
+        m.status_ != 4
+        <if test="name != null and name != ''">
+            and (m.phone_ like CONCAT('%',#{name},'%')
+            or m.account_ like CONCAT('%',#{name},'%')
+            or m.name_ like CONCAT('%',#{name},'%'))
+        </if>
+        <if test="fullCodes != null and fullCodes != ''">
+            and o.fullCodes_ like CONCAT(#{fullCodes},'%')
+        </if>
+        <if test="beginTime != null and beginTime != '' and endTime != null and endTime != ''">
+            and (m.create_Time_ between CONCAT(#{beginTime},' 00:00:00') and CONCAT(#{endTime},' 23:59:59'))
+        </if>
+    </select>
+
+    <select id="listManager" resultType="com.v4ward.core.poiEntity.ManagerPoiEntity">
+        select
+        m.id_ id,
+        m.account_ account,
+        m.name_ name,
+        m.phone_ phone,
+        m.position_ position,
+        o.num_ orgNum
+        from tb_manager m
+        left join tb_manager_org mo
+        ON m.id_ = mo.managerId_
+        left join tb_org o
+        ON mo.orgId_ = o.id_
+        where m.status_ = 1
+    </select>
+
+    <select id="listErrorManagerByManagerId" resultType="com.v4ward.core.poiEntity.ManagerPoiEntity">
+        select
+        id_ id,
+        account_ account,
+        name_ name,
+        phone_ phone,
+        position_ position,
+        orgnum_ orgNum
+        from tb_manager_error_data
+        where create_Emp_ = #{id}
+    </select>
+
+
+    <select id="getRoleIdById"  parameterType="String" resultType="String">
+        SELECT
+        roleId_ roleId
+        FROM tb_manager_role
+        WHERE
+        managerId_ = #{id}
+    </select>
+
+    <select id="getCountByRoleType" resultType="int">
+        SELECT count(pnum_) count
+        FROM tb_role
+        WHERE num_ IN
+        (<foreach collection="ids" index="index" item="id" separator=",">
+            #{id}
+        </foreach>)
+        and pnum_ = #{pnum}
+    </select>
+
+    <update id="updateManager" parameterType="com.v4ward.core.model.Manager">
+        UPDATE tb_manager
+        SET
+        name_ = #{name},
+        account_ = #{account},
+        position_ = #{position},
+        phone_ = #{phone}
+        WHERE
+        id_ = #{id}
+    </update>
+
+    <update id="updateImByUserId" parameterType="com.v4ward.core.model.Manager">
+        UPDATE tb_manager
+        SET
+        imname_ = #{imName},
+        imtoken_ = #{imToken},
+        isopenim_ = #{isOpenIm}
+        WHERE
+        id_ = #{id}
+    </update>
+
+
+    <update id="updateStatus">
+        UPDATE tb_manager
+        SET
+        status_ = #{code}
+        WHERE
+        id_ = #{id}
+    </update>
+
+    <update id="updateManagerPwd" parameterType="com.v4ward.core.model.Manager">
+        UPDATE tb_manager
+        SET
+            password_ = #{password},
+            salt_ = #{salt}
+        WHERE
+        id_ = #{id}
+    </update>
+
+    <update id="updateHeadImg">
+        UPDATE tb_manager
+        SET
+        url_ = #{url}
+        WHERE
+        id_ = #{id}
+    </update>
+
+    <delete id="deleteRolesById" parameterType="String">
+        delete FROM tb_manager_role WHERE managerId_= #{id}
+    </delete>
+
+    <delete id="deleteOrgById" parameterType="String">
+        delete FROM tb_manager_org WHERE managerId_= #{id}
+    </delete>
+
+    <delete id="delErrorManagerByManagerId" parameterType="String">
+        delete FROM tb_manager_error_data WHERE create_Emp_= #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+    <!--引入JS-->
+    <script type="text/javascript" src="js/webuploader.nolog.js"></script>
+<style type="text/css">
+table tr>th {
+	text-align: center;
+}
+
+table tr>td {
+	text-align: center;
+}
+</style>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>会议材料管理</h5>
+					<input type="hidden" id="partmeetingId" th:value="${partmeetingId}" >
+                </div>
+                <div class="ibox-content">
+                    <div class="row row-lg">
+                        <div class="col-sm-12">
+
+							<table class="table table-bordered">
+								<tr>
+									<th width="50%">文件名</th>
+									<th width="20%">是否允许不签到查看</th>
+									<th width="10%">排序号</th>
+									<th>操作</th>
+								</tr>
+								<tr th:each="resource : ${resourcesList}">
+									<td th:text="${resource.resourcesTitle}"></td>
+									<td th:text="${resource.resourcesStatus==0?'允许':'不允许'}"></td>
+									<td th:text="${resource.orderCode}"></td>
+									<td <button id="btnSet"
+											class="btn btn-primary btn-sm" th:onclick="'javascript:openSet(\''+${resource.id}+'\');'">设置</button> &nbsp;&nbsp;
+										<button id="btnDel" class="btn btn-danger btn-sm" th:onclick="'javascript:del(\''+${resource.id}+'\');'">删除</button>
+									</td>
+								</tr>
+							</table>
+						</div>
+                    
+						<div class="col-sm-12">
+                            <div id="uploader" class="wu-example">
+                                <!--用来存放文件信息-->
+                                <div id="thelist" class="uploader-list"></div>
+                                <div class="btns">
+                                    <div id="picker" class="btn ">选择文件</div>
+                                    <button id="ctlBtn" class="btn btn-primary">开始上传</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/partmeeting/upload.js"></script>
+</body>
+</html>

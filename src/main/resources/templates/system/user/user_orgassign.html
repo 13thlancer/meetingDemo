@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <script type="text/javascript">
+        $(function () {
+
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+
+            $("#btn_close").bind("click", function () {
+                parent.layer.close(index);
+            });
+
+            $("#btn_save").bind("click", function () {
+                var ids = Feng.zTreeCheckedNodes("zTree");
+                var ajax = new $ax(Feng.ctxPath + "/mgr/setOrg", function (data) {
+                    if(data.code == 200){
+                        Feng.success("分配组织成功!");
+                        window.parent.MgrUser.table.refresh();
+                        parent.layer.close(index);
+                    }else{
+                        Feng.error("分配组织失败! " + data.message + "!");
+                    }
+                }, function (data) {
+                    Feng.error("分配组织失败!" + data.responseJSON.message + "!");
+                });
+                ajax.set("orgIds", ids);
+                ajax.set("userId", $("#id").val());
+                ajax.start();
+            });
+
+            initZtree();
+        });
+
+        function initZtree() {
+            var setting = {
+                check: {
+                    enable: true,
+                    chkboxType: {
+                        "Y": "",
+                        "N": ""
+                    }
+                },
+                data: {
+                    simpleData: {
+                        enable: true
+                    }
+                }
+            };
+
+            var ztree = new $ZTree("zTree", "/org/orgTreeListByUserId/"+  $("#id").val());
+            ztree.setSettings(setting);
+            ztree.init();
+        }
+    </script>
+
+
+    <!-- 配置grid -->
+    <div class="container"
+         style="padding:  0px 10px !important; margin-top: -10px; text-align: center !important;">
+        <div class="row">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5  th:text="${userAccount}"></h5>
+                    <input type="hidden" id="id" th:value="${userId}">
+                </div>
+                <div class="ibox-content">
+                    <ul id="zTree" class="ztree"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-sm btn-info" type="button" id="btn_save">
+                    <i class="ace-icon fa fa-check bigger-110"></i> 保存
+                </button>
+                &nbsp;
+                <button class="btn btn-sm btn-danger" type="button" id="btn_close">
+                    <i class="ace-icon fa fa-close bigger-110"></i> 关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/content.js?v=1.0.0"></script>
+</body>
+</html>

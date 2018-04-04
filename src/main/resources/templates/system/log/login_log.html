@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>登录日志</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">开始时间</button>
+                                    </div>
+                                    <input type="text" class="form-control layer-date" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" id="beginTime"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">结束时间</button>
+                                    </div>
+                                    <input type="text" class="form-control layer-date" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" id="endTime"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">日志名称</button>
+                                    </div>
+                                    <input type="text" class="form-control" id="logName" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="button" class="btn btn-primary " onclick="LoginLog.search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="LoginLogTableToolbar" role="group">
+                            <button type="button" class="btn btn-primary " onclick="LoginLog.delLog()"><i class="fa fa-plus"></i>&nbsp;清空日志</button>
+                        </div>
+                        <table id="LoginLogTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/system/log/login_log.js"></script>
+
+</body>
+</html>

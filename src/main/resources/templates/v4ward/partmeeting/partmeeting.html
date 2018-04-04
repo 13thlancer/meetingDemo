@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h4>会议主题：<span id='meetingTheme' style="color:red" th:text="${meetingTheme}"></span></h4>
+                <input type="hidden" id="meetingId"  th:value="${meetingId}"/>
+                
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button data-toggle="dropdown" class="btn btn-white dropdown-toggle"
+                                                type="button">分会场主题：
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control" id="partmeetingTitle" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" class="btn btn-primary " onclick="partmeeting.search()">
+                                    <i class="fa fa-search"></i>&nbsp;搜索
+                                </button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" class="btn btn-primary " onclick="partmeeting.reset()">
+                                    <i class="fa fa-eraser"></i>&nbsp;重置
+                                </button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" class="btn btn-danger " onclick="javascript:history.back(-1);">
+                                    <i class="fa fa-arrow-left"></i>&nbsp;返回
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="partmeetingTableToolbar" role="group">
+                            <button type="button" class="btn btn-primary btn-sm " onclick="partmeeting.openAddPartmeeting()">
+                                <i class="fa fa-plus"></i>&nbsp;分会场录入
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="partmeeting.modify()">
+                                <i class="fa fa-pencil"></i>&nbsp;修改
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="partmeeting.del()">
+                                <i class="fa fa-trash"></i>&nbsp;删除
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="partmeeting.view()">
+                                <i class="fa fa-eye"></i>&nbsp;查看
+                            </button>&nbsp;
+                            <button type="button" class="btn btn-primary btn-sm" onclick="partmeeting.openSubmeeting()">
+                                <i class="fa fa-list"></i>&nbsp;议程管理
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="partmeeting.openAssignUser()">
+                                <i class="fa fa-user-plus"></i>&nbsp;参会人员
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="partmeeting.openUpload()">
+                                <i class="fa fa-list"></i>&nbsp;会议材料管理
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="partmeeting.qrCode()">
+                                <i class="fa fa-list"></i>&nbsp;二维码
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="partmeeting.sign()">
+                                <i class="fa fa-list"></i>&nbsp;签到统计
+                            </button>
+                            <br>
+                            
+                            <button type="button" class="col-sm-2 btn btn-primary btn-sm" onclick="partmeeting.selectFile()">
+                                <i class="fa fa-file-excel-o"></i>&nbsp;选择文件
+                            </button><span id="file" class ="col-sm-3"></span>
+
+                            <form id="excel" style="display:none;" enctype="multipart/form-data" method="post" action="#" >
+                                <input name="file"  type="file" id="selectFile"
+                                accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                            </form>
+                            
+                            <button type="button" class=" btn btn-primary btn-sm" onclick="partmeeting.importExcel()">
+                                <i class="fa fa-upload"></i>&nbsp;导入
+                            </button>
+                             <button type="button" class="btn btn-primary btn-sm" onclick="partmeeting.excelModel()">
+                                <i class="fa fa-download"></i>&nbsp;下载模版
+                            </button>
+                        </div>
+                        <table id="partmeetingTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/partmeeting/partmeeting.js"></script>
+</body>
+</html>

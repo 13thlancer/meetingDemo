@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.core.dao.MenuMapper">
+
+  <select id="listMenus" parameterType="com.v4ward.core.model.Menu" resultType="java.util.Map">
+    select
+    id_ id,
+    num_ num,
+    code_ code,
+    pcode_ pcode,
+    name_ name,
+    icon_ icon,
+    url_ url,
+    num_ num,
+    seq_ seq,
+    levels_ levels,
+    isMenu_ ismenu,
+    status_ statusName
+    from tb_menu
+    where status_ = 1
+    <if test="name != null and name != ''">
+      and (name_ like CONCAT('%',#{name},'%') or code_ like CONCAT('%',#{name},'%'))
+    </if>
+    <if test="levels != null and levels != ''">
+      and levels_ = #{levels}
+    </if>
+    ORDER BY seq_
+  </select>
+
+
+  <select id="menuTreeList" resultType="com.v4ward.core.model.ZTreeNode">
+    SELECT
+    m1.code_ AS id,
+    (
+    CASE
+    WHEN (m2.code_ = 0 OR m2.code_ IS NULL) THEN
+    0
+    ELSE
+    m2.code_
+    END
+    ) AS pId,
+    m1.name_
+    AS NAME,
+    (
+    CASE
+    WHEN (m2.code_ = 0 OR m2.code_ IS NULL) THEN
+    'true'
+    ELSE
+    'false'
+    END
+    ) as isOpen
+    FROM
+    tb_menu m1
+    LEFT join tb_menu m2 ON m1.pcode_ = m2.code_
+    ORDER BY
+    m1.code_ ASC
+  </select>
+
+  <select id="menuTreeListByMenuIds" resultType="com.v4ward.core.model.ZTreeNode">
+    SELECT
+    m1.code_ AS id,
+    (
+    CASE
+    WHEN (m2.code_ = 0 OR m2.code_ IS NULL) THEN
+    0
+    ELSE
+    m2.code_
+    END
+    ) AS pId,
+    m1.name_ AS NAME,
+    (
+    CASE
+    WHEN (m2.code_ = 0 OR m2.code_ IS
+    NULL) THEN
+    'true'
+    ELSE
+    'false'
+    END
+    ) as isOpen,
+    (
+    CASE
+    WHEN (m3.code_ = 0 OR m3.code_
+    IS NULL) THEN
+    'false'
+    ELSE
+    'true'
+    END
+    ) "checked"
+    FROM
+    tb_menu m1
+    LEFT JOIN
+    tb_menu m2
+    ON m1.pcode_ = m2.code_
+    left join (
+    SELECT
+    code_
+    FROM
+    tb_menu
+    WHERE
+    code_ IN
+    <foreach collection="list" index="index" item="i" open="("
+             separator="," close=")">
+      #{i}
+    </foreach>
+    ) m3 on m1.code_ = m3.code_
+    ORDER BY
+    m1.code_ ASC
+  </select>
+
+
+  <select id="selectByCode" resultType="com.v4ward.core.model.Menu">
+    select
+      id_ id,
+      code_ code,
+      pcode_ pcode,
+      fullCodes_ fullCodes,
+      name_ name,
+      icon_ icon,
+      url_ url,
+      num_ num,
+      levels_ levels,
+      isMenu_ isMenuName,
+      status_ statusName
+    from tb_menu
+    WHERE
+     code_ = #{code}
+  </select>
+
+  <select id="selectMapById" resultType="map">
+    select
+    id_ id,
+    code_ code,
+    pcode_ pcode,
+    name_ name,
+    icon_ icon,
+    url_ url,
+    num_ num,
+    seq_ seq,
+    levels_ levels,
+    isMenu_ isMenu,
+    status_ statusName
+    from tb_menu
+    WHERE
+    id_ = #{id}
+  </select>
+
+  <select id="selectById" parameterType="String" resultType="com.v4ward.core.model.Menu">
+    select
+    id_ id,
+    code_ code,
+    pcode_ pcode,
+    name_ name,
+    icon_ icon,
+    url_ url,
+    num_ num,
+    levels_ levels,
+    isMenu_ isMenuName,
+    status_ statusName
+    from tb_menu
+    WHERE
+    id_ = #{id}
+  </select>
+
+  <select id="checkCode" parameterType="String" resultType="String">
+    select
+      code_ code
+    from tb_menu
+    WHERE
+    code_ = #{code}
+  </select>
+
+  <select id="selectListByPcode" parameterType="String" resultType="com.v4ward.core.model.Menu">
+    select
+      code_ code
+    from tb_menu
+    WHERE
+    pcode_ like CONCAT('%',#{code},'%')
+  </select>
+
+  <select id="getMenuIdsByRoleNum" resultType="Integer">
+    select menuid_ menuid from
+    tb_role_menu where rolenum_ = #{rolenum}
+  </select>
+
+  <select id="selectPmenu" parameterType="com.v4ward.core.model.Menu" resultType="com.v4ward.core.model.Menu">
+    select
+      id_ id,
+      code_ code,
+      pcode_ pcode,
+      name_ name,
+      icon_ icon,
+      url_ url,
+      num_ num,
+      levels_ levels,
+      isMenu_ isMenuName,
+      status_ statusName
+    from tb_menu
+    WHERE
+     code_ = #{code}
+  </select>
+
+  <select id="getMaxCodeByPcode" parameterType="String" resultType="String">
+    select
+    code_ code
+    from tb_menu
+    WHERE
+    pcode_ = #{pcode}
+    order by code_ DESC
+    LIMIT 1
+  </select>
+
+  <select id="getMaxSeqByPcode" parameterType="String" resultType="Integer">
+    select
+    seq_ seq
+    from tb_menu
+    WHERE
+    pcode_ = #{pcode}
+    order by seq_ DESC
+    LIMIT 1
+  </select>
+
+  <select id="getMenuByPCode" parameterType="String" resultType="com.v4ward.core.model.Menu">
+    select
+    id_ id,
+    num_ num,
+    pnum_ pnum,
+    code_ code,
+    levels_ levels,
+    pcode_ pcode,
+    fullcodes_ fullCodes,
+    name_ name
+    from tb_menu
+    where code_ = #{pcode}
+  </select>
+
+  <select id="getPmenu" parameterType="String" resultType="com.v4ward.core.model.Menu">
+    select
+    id_ id,
+    num_ num,
+    pnum_ pnum,
+    code_ code,
+    levels_ levels,
+    pcode_ pcode,
+    fullcodes_ fullCodes,
+    name_ name
+    from tb_menu
+    where id_ = #{id}
+  </select>
+
+  <select id="selectMenuById" parameterType="String" resultType="map">
+  select
+    id_ id,
+    num_ num,
+    pnum_ pnum,
+    code_ code,
+    levels_ levels,
+    pcode_ pcode,
+    fullcodes_ fullCodes,
+    name_ name
+    from tb_menu
+    where id_ = #{id}
+  </select>
+
+  <select id="selectMenuByMenuId" parameterType="String" resultType="com.v4ward.core.model.Menu">
+    select
+    id_ id,
+    code_ code,
+    pcode_ pcode,
+    name_ name,
+    num_ num,
+    pnum_ pnum,
+    seq_ seq,
+    fullcodes_ fullCodes
+    from tb_menu
+    where status_ = 1
+    and id_ = #{id}
+    ORDER BY seq_
+  </select>
+
+  <select id="listChildMenuByPcode" parameterType="String" resultType="com.v4ward.core.model.Menu">
+    select
+    id_ id,
+    num_ num,
+    pnum_ pnum,
+    code_ code,
+    pcode_ pcode,
+    fullcodes_ fullCodes,
+    name_ name
+    from tb_menu
+    where pcode_ = #{pcode}
+  </select>
+
+
+  <insert id="insert" parameterType="com.v4ward.core.model.Menu">
+    <selectKey keyProperty="id" resultType="String" order="BEFORE">
+      select replace(uuid(),'-','') from dual
+    </selectKey>
+    INSERT INTO tb_menu
+	  (id_,code_,pcode_,fullCodes_,name_,icon_,url_,num_,pnum_,levels_,seq_,isMenu_,status_,createTime_)
+	values
+	  (#{id},#{code},#{pcode},#{fullCodes},#{name},#{icon},#{url},#{num},#{pnum},#{levels},#{seq},#{ismenu},#{status},now())
+  </insert>
+
+  <update id="updateById" parameterType="com.v4ward.core.model.Menu">
+      update tb_menu
+      SET
+      num_ = #{code},
+      name_ = #{name},
+      code_ = #{code},
+      pcode_ = #{pcode},
+      fullCodes_ = #{fullCodes},
+      url_ = #{url},
+      isMenu_ = #{ismenu},
+      levels_ = #{levels},
+      seq_ = #{seq}
+      WHERE
+      id_ = #{id}
+  </update>
+
+  <update id="updateMenuSeqUp">
+    update
+    tb_menu o1,
+    tb_menu o2
+    SET
+    o1.seq_ = o2.seq_,
+    o2.seq_ = o1.seq_
+    WHERE
+    o1.pcode_ = #{pCode} and o1.seq_ = #{seq} and o2.pcode_ = #{pCode} and o2.seq_ = #{seq}-1
+  </update>
+
+  <update id="updateMenuSeqDown">
+    update
+    tb_menu o1,
+    tb_menu o2
+    SET
+    o1.seq_ = o2.seq_,
+    o2.seq_ = o1.seq_
+    WHERE
+    o1.pcode_ = #{pCode} and o1.seq_ = #{seq} and o2.pcode_ = #{pCode} and o2.seq_ = #{seq}+1
+  </update>
+
+
+  <delete id="delMenu" parameterType="String">
+    delete from tb_menu WHERE id_ =#{id}
+  </delete>
+</mapper>

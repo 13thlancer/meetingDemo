@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.meeting.dao.SignRestMapper">
+
+	<insert id="insertSysPartmeetingUser" parameterType="com.v4ward.meeting.model.SysPartmeetingUser">
+		INSERT INTO SYS_PARTMEETING_USER (
+			ID_, 
+			MANAGER_ID_, 
+			USER_ID_, 
+	      	PARTMEETING_ID_, 
+	      	HOTEL_INFO_, 
+	      	ROOM_INFO_, 
+	      	SEAT_INFO_, 
+	      	BIND_STATUS_, 
+	      	SIGN_STATUS_, 
+	      	SIGNTIME_, 
+	      	LINE_NUM_, 
+	      	CREATE_EMP_, 
+	      	CREATE_TIME_,
+	      	UPDATE_EMP_,
+	      	UPDATE_TIME_,
+	      	VERSION
+		)
+	    VALUES (
+	    	#{id}, 
+	    	#{managerId},
+	    	#{userId},
+	    	#{partmeetingId}, 
+	    	#{hotelInfo},
+	    	#{roomInfo},
+	    	#{seatInfo},
+	    	#{bindStatus},
+	    	#{signStatus},
+	    	#{signtime},
+	    	#{lineNum},
+	    	#{createEmp},
+	    	#{createTime},
+	    	#{updateEmp},
+	    	#{updateTime},
+	    	#{version}
+	    )
+	</insert>
+	
+	<update id="updateSysPartmeetingUser" parameterType="com.v4ward.meeting.model.SysPartmeetingUser" >
+	    UPDATE SYS_PARTMEETING_USER SET 
+	   		MANAGER_ID_ = #{managerId}, 
+			USER_ID_ = #{userId}, 
+	      	PARTMEETING_ID_ = #{partmeetingId}, 
+	      	BIND_STATUS_ = #{bindStatus}, 
+	      	SIGN_STATUS_ = #{signStatus}, 
+	      	SIGNTIME_ = #{signtime}, 
+	      	UPDATE_EMP_ = #{updateEmp},
+	      	UPDATE_TIME_ = #{updateTime},
+	      	VERSION = VERSION +1
+	    WHERE ID_ = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="selectSysPartmeetingUserById" parameterType="java.lang.String" resultType="com.v4ward.meeting.model.SysPartmeetingUser">
+		SELECT
+			ID_ id, 
+			MANAGER_ID_ managerId, 
+			USER_ID_ userId, 
+	      	PARTMEETING_ID_ partmeetingId, 
+	      	HOTEL_INFO_ hotelInfo, 
+	      	ROOM_INFO_ roomInfo, 
+	      	SEAT_INFO_ seatInfo, 
+	      	BIND_STATUS_ bindStatus, 
+	      	SIGN_STATUS_ signStatus, 
+	      	SIGNTIME_ signtime, 
+	      	LINE_NUM_ lineNum, 
+	      	CREATE_EMP_ createEmp, 
+	      	CREATE_TIME_ createTime,
+	      	UPDATE_EMP_ updateEmp,
+	      	UPDATE_TIME_ updateTime,
+	      	VERSION version
+		FROM SYS_PARTMEETING_USER
+		WHERE PARTMEETING_ID_ = #{partmeetingId} AND USER_ID_ = #{userId}
+	</select>
+	
+	<select id="selectSysPartmeetingUser" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+	      	DATE_FORMAT(SIGNTIME_,'%k:%i') time, 
+			(SELECT A.NAME_ FROM TB_MANAGER A WHERE A.ID_ = T.USER_ID_) name,
+			(SELECT B.FULLNAMES_ FROM TB_MANAGER_ORG A,TB_ORG B WHERE A.ORGID_ = B.ID_ AND A.MANAGERID_ = T.USER_ID_) org
+		FROM
+			SYS_PARTMEETING_USER T
+		WHERE
+			T.PARTMEETING_ID_ = #{partmeetingId}
+		AND T.SIGN_STATUS_ = 0 ORDER BY org,name
+	</select>
+	
+</mapper>

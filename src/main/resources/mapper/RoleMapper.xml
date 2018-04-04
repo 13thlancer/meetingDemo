@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.core.dao.RoleMapper">
+
+    <insert id="insertRole" parameterType="com.v4ward.core.model.Role">
+        <selectKey keyProperty="id" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        INSERT INTO tb_role
+        (id_,num_,pnum_,name_,orgId_,status_,create_Time_)
+        values
+        (#{id},#{num},#{pnum},#{name},#{orgId},1,now())
+    </insert>
+
+    <insert id="insertRoleMenu" parameterType="com.v4ward.core.model.RoleMenu">
+        <selectKey keyProperty="id" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        INSERT INTO tb_role_menu
+        (id_,menuid_,rolenum_)
+        values
+        (#{id},#{menuid},#{rolenum})
+    </insert>
+
+    <select id="selectRoles" resultType="map">
+        select
+        id_ id,
+        num_ num,
+        pnum_ pnum,
+        name_ name,
+        remark_ remark
+        from tb_role
+        where
+        status_ = 1
+        <if test="condition != null">
+            AND name_ like CONCAT('%',#{condition},'%')
+        </if>
+    </select>
+
+    <select id="getById" parameterType="String" resultType="com.v4ward.core.model.Role">
+        select
+        r.id_ id,
+        r.num_ num,
+        r.pnum_ pnum,
+        r.name_ name,
+        o.name_ orgName,
+        o.code_ orgCode
+        from tb_role r
+        left JOIN
+        tb_org o
+        ON r.orgId_ = o.id_
+        WHERE
+        r.id_ = #{id}
+    </select>
+
+    <select id="getByRoleNum" resultType="com.v4ward.core.model.Role">
+        select
+        r.id_ id,
+        r.num_ num,
+        r.pnum_ pnum,
+        r.name_ name,
+        o.name_ orgName,
+        o.code_ orgCode,
+        o.id_ orgId
+        from tb_role r
+        left JOIN
+        tb_org o
+        ON r.orgId_ = o.id_
+        WHERE
+        r.num_ = #{rolenum}
+    </select>
+
+    <select id="getByRoleId" resultType="com.v4ward.core.model.Role">
+        select
+        id_ id,
+        num_ num,
+        pnum_ pnum,
+        name_ name,
+        remark_ remark
+        FROM tb_role
+        WHERE
+        id_ = #{id}
+    </select>
+    
+    <select id="getPname" parameterType="Integer" resultType="String">
+        SELECT
+        name_ name
+        from tb_role
+        WHERE
+        num_ = #{pnum}
+    </select>
+
+    <select id="checkNum" resultType="String">
+        SELECT
+          name_ name
+        from tb_role
+        WHERE
+        num_ = #{num}
+    </select>
+
+    <select id="roleTreeList" resultType="com.v4ward.core.model.ZTreeNode">
+        select
+        num_ "id",
+        pnum_ "pId",
+        name_ as "name",
+        (case when (pnum_=0 or pnum_ is null) then 'true' else 'false' end) "open"
+        from tb_role
+        where status_ = 1
+    </select>
+
+    <select id="roleTreeListByRoleId" resultType="com.v4ward.core.model.ZTreeNode">
+        SELECT
+        r.num_ "id",
+        pnum_ "pId",
+        NAME_ AS "name",
+        (
+        CASE
+        WHEN (pnum_ = 0 OR pnum_ IS NULL) THEN
+        'true'
+        ELSE
+        'false'
+        END
+        ) "open",
+        (
+        CASE
+        WHEN (r1.num_ = 0 OR r1.num_ IS NULL) THEN
+        'false'
+        ELSE
+        'true'
+        END
+        ) "checked"
+        FROM
+        tb_role r
+        LEFT JOIN (
+        SELECT
+        num_
+        FROM
+        tb_role
+        WHERE
+        num_ IN
+
+        <foreach collection="array" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+
+        ) r1 ON r.num_ = r1.num_
+        r.status_ = 1
+
+    </select>
+
+    <select id="pRoleTreeList" resultType="com.v4ward.core.model.ZTreeNode">
+        select
+        num_ "id",
+        pnum_ "pId",
+        name_ as "name"
+        from tb_role
+        WHERE  pnum_ = '-1'
+    </select>
+
+    <select id="getMaxNumByPnum" parameterType="String" resultType="String">
+        select
+        num_ num
+        from tb_role
+        WHERE
+        pnum_ = #{pnum}
+        order by num_ DESC
+        LIMIT 1
+    </select>
+
+    <select id="getMnagerByRoleNum" resultType="com.v4ward.core.model.ManagerRole">
+        SELECT
+        managerId_ managerId,
+        roleId_ roleId,
+        roleType_ roleType,
+        orgId_ orgId
+        FROM
+        tb_manager_role
+        WHERE
+        roleId_ = #{id}
+    </select>
+
+    <update id="updateById" parameterType="com.v4ward.core.model.Role">
+        UPDATE tb_role
+        SET
+
+        <if test="orgId != null">
+            orgId_ = #{orgId},
+        </if>
+        name_ = #{name}
+        WHERE
+        id_ = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete FROM tb_role WHERE id_= #{id}
+    </delete>
+
+    <delete id="deleteRolesByrolenum">
+        delete FROM tb_manager_role WHERE roleId_= #{num}
+    </delete>
+
+    <delete id="deleteRoleOrgByRoleNum">
+        delete FROM tb_role_menu WHERE rolenum_= #{num}
+    </delete>
+
+</mapper>

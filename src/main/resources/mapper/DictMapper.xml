@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.core.dao.DictMapper">
+
+	<insert id="insert" parameterType="com.v4ward.core.model.Dict">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		INSERT INTO tb_dict
+		(id_,num_,pid_,name_,tips_)
+		values
+		(#{id},#{num},#{pid},#{name},#{tips})
+
+	</insert>
+
+	<select id="list" resultType="map">
+		select
+		id_ id,
+		num_ num,
+		pid_ pid,
+		name_ name,
+		tips_ tips
+		from tb_dict
+		where pid_ = '0'
+		<if test="condition != null and condition != ''">
+			AND name_ like CONCAT('%',#{condition},'%')
+		</if>
+		order by id_ ASC
+	</select>
+
+	<select id="selectListByNameAndPid" resultType="com.v4ward.core.model.Dict">
+		select
+		id_ id,
+		num_ num,
+		pid_ pid,
+		name_ name,
+		tips_ tips
+		from tb_dict
+		where pid_ = #{pid}
+		AND name_ = #{name}
+	</select>
+
+	<select id="selectListByPid" resultType="com.v4ward.core.model.Dict">
+		select
+		id_ id,
+		num_ num,
+		pid_ pid,
+		name_ name,
+		tips_ tips
+		from tb_dict
+		where pid_ = #{pid}
+	</select>
+
+	<select id="selectById" resultType="com.v4ward.core.model.Dict">
+		select
+		id_ id,
+		num_ num,
+		pid_ pid,
+		name_ name,
+		tips_ tips
+		from tb_dict
+		where id_ = #{id}
+	</select>
+
+	<select id="selectList" resultType="com.v4ward.core.model.Dict">
+		select
+		id_ id,
+		num_ num,
+		pid_ pid,
+		name_ name,
+		tips_ tips
+		from tb_dict
+		where name_ = #{name}
+	</select>
+
+	<delete id="deleteById" >
+		delete from tb_dict where id_ = #{id}
+	</delete>
+
+	<delete id="deleteByPid">
+		delete from tb_dict where pid_ = #{id}
+	</delete>
+</mapper>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div class="form-horizontal" id="meetingUserInfoForm">
+
+                <input type="hidden" id="id" name="id" th:value="${PUser.id}">
+
+                <div class="row">
+                    <div class="col-sm-6 b-r">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">酒店信息</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" id="hotelInfo" name="hotelInfo" type="text"  th:value="${PUser.hotelInfo}">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">房间信息</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" id="roomInfo" name="roomInfo" type="text" th:value="${PUser.roomInfo}">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="driverInfoContent">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">座位信息</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" id="seatInfo" name="seatInfo" type="text" th:value="${PUser.seatInfo}">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row btn-group-m-t">
+                    <div class="col-sm-10">
+                        <button type="button" class="btn btn-info " onclick="SignInfoDlg.updateMeetingUser()" id="ensure">
+                            <i class="fa fa-check"></i>&nbsp;提交
+                        </button>
+
+                        <button type="button" class="btn btn-danger " onclick="SignInfoDlg.close()" id="cancel">
+                            <i class="fa fa-eraser"></i>&nbsp;取消
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/sign/sign_info.js"></script>
+
+</body>
+</html>

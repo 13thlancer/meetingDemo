@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link">
+<head>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+
+					<input type="hidden" id="partmeetingId" th:value="${partmeetingId}" />
+					<div class="ibox-title">
+						<div class="col-sm-6">
+							<h4>
+								会议主题：<span style="color: red" th:text="${meetingTheme}"></span>
+							</h4>
+						</div>
+						<div class="col-sm-6">
+							<h4>
+								分会场主题：<span id="partmeetingTitle" style="color: red"
+									th:text="${partmeetingTitle}"></span>
+							</h4>
+						</div>
+					</div>
+					<div class="ibox-content">
+						<div class="row row-lg">
+							<div class="col-sm-12">
+								<div class="row">
+									<div class="col-sm-3">
+										<div class="input-group">
+											<div class="input-group-btn">
+												<button data-toggle="dropdown"
+													class="btn btn-white dropdown-toggle" type="button">账号：
+												</button>
+											</div>
+											<input type="text" class="form-control" id="account"
+												placeholder="手机号" />
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="input-group">
+											<div class="input-group-btn">
+												<button data-toggle="dropdown"
+													class="btn btn-white dropdown-toggle" type="button">姓名：
+												</button>
+											</div>
+											<input type="text" class="form-control" id="name" />
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="input-group">
+											<div class="input-group-btn">
+												<button data-toggle="dropdown"
+													class="btn btn-white dropdown-toggle" type="button">签到状态：
+												</button>
+											</div>
+											<select id="signStatus" class="form-control"
+												name="signStatus">
+												<option value="">--不限--</option>
+												<option value="0">未签到</option>
+												<option value="1">已签到</option>
+												<option value="2">迟到</option>
+												<option value="3">请假</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-sm-1">
+										<button type="button" class="btn btn-primary "
+											onclick="sign.search()">
+											<i class="fa fa-search"></i>&nbsp;搜索
+										</button>
+									</div>
+									<div class="col-sm-1">
+										<button type="button" class="btn btn-primary "
+											onclick="sign.reset()">
+											<i class="fa fa-eraser"></i>&nbsp;重置
+										</button>
+									</div>
+									<div class="col-sm-1">
+										<button type="button" class="btn btn-danger "
+											onclick="javascript:history.back(-1);">
+											<i class="fa fa-arrow-left"></i>&nbsp;返回
+										</button>
+									</div>
+								</div>
+								<div class="hidden-xs" id="signTableToolbar" role="group">
+
+									<button type="button" class="btn btn-primary "
+										onclick="sign.leave()">
+										<i class="fa fa-pencil"></i>&nbsp;请假
+									</button>
+									<button type="button" class="btn btn-primary "
+											onclick="sign.toUpdateMeetingUser()">
+										<i class="fa fa-pencil"></i>&nbsp;修改
+									</button>
+									<button type="button" class="btn btn-danger "
+											onclick="sign.delMeetingUser()">
+										<i class="fa fa-trash"></i>&nbsp;删除
+									</button>
+									<button type="button" class="btn btn-primary "
+										onclick="sign.export()">
+										<i class="fa fa-download"></i>&nbsp;导出
+									</button>
+								</div>
+								<table id="signTable" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="/js/content.js?v=1.0.0"></script>
+	<script src="/modular/v4ward/sign/sign.js"></script>
+</body>
+</html>

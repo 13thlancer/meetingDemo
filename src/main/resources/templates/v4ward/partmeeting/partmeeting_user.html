@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link">
+<head>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <!-- 配置grid -->
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5 th:text="${roleName}"></h5>
+            <input type="hidden" id="meetingId" th:value="${meetingId}">
+            <input type="hidden" id="userIds" th:value="${userIds}">
+        </div>
+
+        <div class="ibox-content">
+            <div class="row row-lg">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-3">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">组织机构</div>
+                                <div class="ibox-content">
+                                    <ul id="zTree" class="ztree"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-sm-2">
+                            <div class="row">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">参会人员</div>
+                                    <div class="ibox-content no-padding">
+                                        <ul id="meetingUser" class="list-group" style="height:300px;overflow:auto;">
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-sm-7">
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12">
+                                    <div class="input-group">
+                                        <div class="input-group-btn">
+                                            <button data-toggle="dropdown" class="btn btn-white dropdown-toggle"
+                                                    type="button">搜索
+                                            </button>
+                                        </div>
+                                        <input type="text" class="form-control" id="search" placeholder="姓名/手机号" oninput="partmeetingUserDlg.search()">
+                                    </div>
+                                </div>
+                            </div>
+                            <table id="partmeetingUserTable"/>
+                        </div>
+
+
+
+
+                    </div>
+                  <!--  <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <button data-toggle="dropdown" class="btn btn-white dropdown-toggle"
+                                            type="button">搜索
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control" id="search" placeholder="姓名/手机号" oninput="partmeetingUserDlg.search()">
+                            </div>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row btn-group-m-t">
+        <div class="col-sm-12">
+            <button type="button" class="btn btn-info " onclick="partmeetingUserDlg.addUser()" id="ensure">
+                <i class="fa fa-check"></i>&nbsp;提交
+            </button>
+
+            <button type="button" class="btn btn-danger " onclick="partmeetingUserDlg.clearUser()" id="clearUser">
+                <i class="fa fa-eraser"></i>&nbsp;清空参会人员
+            </button>
+
+            <button type="button" class="btn btn-danger " onclick="partmeetingUserDlg.clearSearch()" id="clearSearch">
+                <i class="fa fa-eraser"></i>&nbsp;清空查询条件
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/partmeeting/partmeeting_user.js"></script>
+
+</body>
+</html>

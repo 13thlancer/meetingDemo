@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.core.dao.OrgMapper">
+
+    <select id="listOrg" parameterType="String" resultType="java.util.Map">
+        select
+        id_ id,
+        code_ code,
+        pcode_ pcode,
+        name_ name,
+        num_ num,
+        pnum_ pnum,
+        fullcodes_ fullCodes,
+        fullnames_ fullNames
+        from tb_org
+        where status_ = 1
+        <if test="name != null and name != ''">
+            and (name_ like CONCAT('%',#{name},'%') or code_ like CONCAT('%',#{name},'%'))
+        </if>
+        ORDER BY seq_
+    </select>
+
+    <select id="getOrgByOrgId" parameterType="String" resultType="com.v4ward.core.model.Org">
+        select
+        id_ id,
+        code_ code,
+        pcode_ pcode,
+        name_ name,
+        num_ num,
+        pnum_ pnum,
+        seq_ seq,
+        fullcodes_ fullCodes,
+        fullnames_ fullNames
+        from tb_org
+        where status_ = 1
+        and id_ = #{orgId}
+        ORDER BY seq_
+    </select>
+
+
+    <select id="orgTreeList" resultType="com.v4ward.core.model.ZTreeNode">
+        SELECT
+        m1.code_ AS id,
+        (
+        CASE
+        WHEN (m2.code_ = 0 OR m2.code_ IS NULL) THEN
+        0
+        ELSE
+        m2.code_
+        END
+        ) AS pId,
+        m1.name_
+        AS NAME,
+        (
+        CASE
+        WHEN (m2.code_ = 0 OR m2.code_ IS NULL) THEN
+        'true'
+        ELSE
+        'false'
+        END
+        ) as isOpen
+        FROM
+        tb_org m1
+        LEFT join tb_org m2 ON m1.pcode_ = m2.code_
+        where m1.status_ = 1
+        ORDER BY
+        m1.num_ ASC
+    </select>
+
+    <select id="orgTreeListByOrgCode" resultType="com.v4ward.core.model.ZTreeNode">
+        SELECT
+        r.code_ "id",
+        pcode_ "pId",
+        NAME_ AS "name",
+        (
+        CASE
+        WHEN (pcode_ = 0 OR pcode_ IS NULL) THEN
+        'true'
+        ELSE
+        'false'
+        END
+        ) "open",
+        (
+        CASE
+        WHEN (r1.code_ = 0 OR r1.code_ IS NULL) THEN
+        'false'
+        ELSE
+        'true'
+        END
+        ) "checked"
+        FROM
+        tb_org r
+        LEFT JOIN (
+        SELECT
+        code_
+        FROM
+        tb_org
+        WHERE
+        code_ IN
+
+        <foreach collection="array" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+
+        ) r1 ON r.code_ = r1.code_
+    </select>
+
+    <select id="checkOrgByNum" parameterType="String" resultType="String">
+        select
+        code_ code
+        from tb_org
+        WHERE
+        num_ = #{num}
+    </select>
+
+    <select id="getMaxCodeByPcode" parameterType="String" resultType="String">
+        select
+        code_ code
+        from tb_org
+        WHERE
+        pcode_ = #{pcode}
+        order by code_ DESC
+        LIMIT 1
+    </select>
+
+    <select id="getMaxSeqByPcode" parameterType="String" resultType="Integer">
+        select
+        seq_ seq
+        from tb_org
+        WHERE
+        pcode_ = #{pcode}
+        order by seq_ DESC
+        LIMIT 1
+    </select>
+
+    <select id="getOrgByPCode" parameterType="String" resultType="com.v4ward.core.model.Org">
+        select
+        id_ id,
+        num_ num,
+        pnum_ pnum,
+        code_ code,
+        pcode_ pcode,
+        fullcodes_ fullCodes,
+        fullnames_ fullNames,
+        name_ name
+        from tb_org
+        where code_ = #{pcode}
+    </select>
+
+    <select id="selectOrgById" parameterType="String" resultType="java.util.Map">
+      select
+        id_ id,
+        num_ num,
+        pnum_ pnum,
+        code_ code,
+        pcode_ pcode,
+        fullcodes_ fullcodes,
+        name_ name
+        from tb_org
+        where id_ = #{id}
+    </select>
+
+    <select id="getOrgByNum" parameterType="String" resultType="com.v4ward.core.model.Org">
+         select
+        id_ id,
+        num_ num,
+        pnum_ pnum,
+        code_ code,
+        pcode_ pcode,
+        fullcodes_ fullcodes,
+        name_ name
+        from tb_org
+        where num_ = #{num}
+    </select>
+
+    <select id="getPorg" parameterType="com.v4ward.core.model.Org" resultType="com.v4ward.core.model.Org">
+        SELECT
+        code_ code,
+        name_ name,
+        fullnames_ fullnames,
+        pcode_ pcode
+        from tb_org
+        WHERE id_ = #{id}
+    </select>
+
+    <select id="listChildOrgByPcode" parameterType="String" resultType="com.v4ward.core.model.Org">
+        select
+        id_ id,
+        num_ num,
+        pnum_ pnum,
+        code_ code,
+        pcode_ pcode,
+        fullcodes_ fullCodes,
+        fullnames_ fullNames,
+        name_ name
+        from tb_org
+        where pcode_ = #{pcode}
+    </select>
+
+    <select id="getOrgManagerById" parameterType="String" resultType="java.util.Map">
+        SELECT
+        mo.managerId_ managerId
+        FROM
+        tb_manager_org mo
+        left join
+        tb_org o
+        ON mo.orgId_ = o.id_
+        left join
+        tb_manager m
+        ON m.id_ = mo.managerId_
+        WHERE mo.orgId_ = #{id}
+        and m.status_ = 1
+    </select>
+
+    <select id="getChildOrgByCode" parameterType="String" resultType="java.util.Map">
+        SELECT
+        code_ code
+        from
+        tb_org
+        WHERE pcode_ = #{code}
+        and status_ = 1
+    </select>
+
+    <select id="getOrgCodeById" parameterType="String" resultType="String">
+            SELECT
+            o.code_ code
+            FROM tb_manager_org m
+            LEFT JOIN tb_org o
+            ON  m.orgId_ = o.id_
+            WHERE
+            m.managerId_ = #{id}
+    </select>
+
+    <select id="getOrgByOrgCode" parameterType="String" resultType="com.v4ward.core.model.Org">
+        select
+        id_ id,
+        num_ num,
+        pnum_ pnum,
+        code_ code,
+        pcode_ pcode,
+        fullcodes_ fullCodes,
+        fullnames_ fullNames,
+        name_ name
+        from tb_org
+        where code_ = #{code}
+    </select>
+
+    <select id="getRolesByOrgId" parameterType="String" resultType="java.util.Map">
+        SELECT
+        roleId_ roleId
+        FROM
+        tb_manager_role
+        where orgId_ = #{id}
+    </select>
+
+    <select id="listExportOrg" resultType="com.v4ward.core.poiEntity.OrgPoiExportEntity">
+        select
+        id_ id,
+        num_ num,
+        pnum_ pnum,
+        fullnames_ fullNames,
+        name_ name
+        from tb_org
+    </select>
+
+    <select id="listUserByOrg" parameterType="String" resultType="java.util.Map">
+        select
+        DISTINCT
+        m.id_ id,
+        m.name_ name,
+        m.phone_ phone,
+        m.position_ position,
+        o.fullNames_ orgName,
+        m.status_ status
+        from tb_manager m
+        LEFT join tb_manager_org mo
+        on m.id_ = mo.managerId_
+        LEFT JOIN tb_org o
+        ON o.id_ = mo.orgId_
+        where m.status_ != 3
+        and o.fullCodes_ like CONCAT(#{fullCodes},'%')
+    </select>
+
+    <insert id="insertOrg" parameterType="com.v4ward.core.model.Org">
+        <selectKey keyProperty="id" resultType="String" order="BEFORE">
+            select replace(uuid(),'-','') from dual
+        </selectKey>
+        INSERT INTO tb_org
+        (id_,code_,pcode_,fullcodes_,name_,fullnames_,num_,pnum_,seq_,status_,create_emp_,create_date_)
+        values
+        (#{id},#{code},#{pcode},#{fullCodes},#{name},#{fullNames},#{num},#{pnum},#{seq},'1',#{createemp},now())
+    </insert>
+
+    <update id="updateOrgById"  parameterType="com.v4ward.core.model.Org">
+        update tb_org
+        SET
+        num_ = #{num},
+        name_ = #{name}
+        WHERE
+        id_ = #{id}
+    </update>
+
+    <update id="updateOrg" parameterType="com.v4ward.core.model.Org">
+          update tb_org
+          SET
+          num_ = #{num},
+          pnum_ = #{pnum},
+          name_ = #{name},
+          code_ = #{code},
+          pcode_ = #{pcode},
+          seq_ = #{seq},
+          fullcodes_ = #{fullCodes},
+          fullnames_ = #{fullNames}
+          WHERE
+          id_ = #{id}
+    </update>
+
+    <update id="updateOrgBySearchCode">
+          update tb_org
+          SET
+          fullnames_ = replace(fullnames_, #{searchName}, #{replaceName})
+          WHERE
+          fullcodes_ like CONCAT('%',#{searchCode},'%')
+    </update>
+
+    <update id="delOrgById" parameterType="String">
+          update tb_org
+          SET
+         status_ = '-1'
+          WHERE
+          id_ = #{id}
+    </update>
+
+    <update id="updateOrgSeqUp">
+         update
+         tb_org o1,
+         tb_org o2
+         SET
+         o1.seq_ = o2.seq_,
+         o2.seq_ = o1.seq_
+          WHERE
+          o1.pcode_ = #{pCode} and o1.seq_ = #{seq} and o2.pcode_ = #{pCode} and o2.seq_ = #{seq}-1
+    </update>
+
+    <update id="updateOrgSeqDown">
+         update
+         tb_org o1,
+         tb_org o2
+         SET
+         o1.seq_ = o2.seq_,
+         o2.seq_ = o1.seq_
+         WHERE
+         o1.pcode_ = #{pCode} and o1.seq_ = #{seq} and o2.pcode_ = #{pCode} and o2.seq_ = #{seq}+1
+    </update>
+
+
+
+    <delete id="delRoleByOrgId">
+        delete from tb_role where orgId_ = #{id}
+    </delete>
+
+</mapper>

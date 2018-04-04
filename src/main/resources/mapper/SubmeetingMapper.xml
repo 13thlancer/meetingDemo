@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.v4ward.meeting.dao.SubmeetingMapper">
+
+
+	<sql id="Base_Column_List" >
+	
+		ID_ 					id,
+		PARTMEETING_ID_ 		partmeetingId,
+<!-- 	STARTTIME_ 				starttime,
+		ENDTIME_ 				endtime, -->
+		DATE_FORMAT(STARTTIME_,'%Y-%m-%d %T') starttime,
+		DATE_FORMAT(ENDTIME_,'%Y-%m-%d %T') endtime,
+		SUBMEETING_THEME_		submeetingTheme,
+		SUBMEETING_HOST_		submeetingHost,
+		SUBMEETING_LOCATION_	submeetingLocation,
+		SUBMEETING_STATUS_ 		submeetingStatus,
+		ORDER_CODE_				orderCode,
+	    CREATE_EMP_ 			createEmp,
+	    CREATE_TIME_ 			createTime,
+	    UPDATE_EMP_ 			updateEmp,
+	    UPDATE_TIME_ 			updateTime,
+	    VERSION 				version
+	    
+	</sql>
+	
+	
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.v4ward.meeting.model.SysSubmeeting">
+		INSERT INTO SYS_SUBMEETING (ID_, PARTMEETING_ID_, STARTTIME_, 
+	      ENDTIME_, SUBMEETING_THEME_, SUBMEETING_HOST_, 
+	      SUBMEETING_LOCATION_, SUBMEETING_STATUS_, ORDER_CODE_, 
+	      CREATE_EMP_, CREATE_TIME_, UPDATE_EMP_, 
+	      UPDATE_TIME_, VERSION)
+	    VALUES (#{id,jdbcType=VARCHAR}, #{partmeetingId,jdbcType=VARCHAR}, #{starttime,jdbcType=TIMESTAMP}, 
+	      #{endtime,jdbcType=TIMESTAMP}, #{submeetingTheme,jdbcType=VARCHAR}, #{submeetingHost,jdbcType=VARCHAR}, 
+	      #{submeetingLocation,jdbcType=VARCHAR}, #{submeetingStatus,jdbcType=TINYINT}, #{orderCode,jdbcType=INTEGER}, 
+	      #{createEmp,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateEmp,jdbcType=VARCHAR}, 
+	      #{updateTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER})
+	</insert>
+
+
+	<!-- 查询分会场列表 -->
+	<select id="listSubmeetings" parameterType="java.util.Map" resultType="java.util.Map">
+	
+		SELECT
+		<include refid="Base_Column_List"></include>
+
+		FROM sys_submeeting
+		
+		WHERE PARTMEETING_ID_ = #{partmeetingId}
+
+		<if test="submeetingTheme != null and submeetingTheme != ''">
+			AND SUBMEETING_THEME_ LIKE CONCAT('%',#{submeetingTheme},'%')
+		</if>
+		
+		ORDER BY ORDER_CODE_,STARTTIME_
+		
+	</select>
+
+
+	<!-- 主键查询 -->
+	<select id="selectSubmeetingById" parameterType="java.lang.String" resultType="com.v4ward.meeting.model.SysSubmeeting">
+	
+		SELECT
+			<include refid="Base_Column_List"></include>
+			
+		FROM sys_submeeting
+		where ID_ = #{id} 
+		
+	</select>
+
+
+	<!-- 修改议程信息 -->
+	<update id="edit" parameterType="com.v4ward.meeting.model.SysSubmeeting" >
+	
+	    UPDATE SYS_SUBMEETING
+	    SET 
+	      STARTTIME_ = #{starttime,jdbcType=TIMESTAMP},
+	      ENDTIME_ = #{endtime,jdbcType=TIMESTAMP},
+	      SUBMEETING_THEME_ = #{submeetingTheme,jdbcType=VARCHAR},
+	      SUBMEETING_HOST_ = #{submeetingHost,jdbcType=VARCHAR},
+	      SUBMEETING_LOCATION_ = #{submeetingLocation,jdbcType=VARCHAR},
+	      SUBMEETING_STATUS_ = #{submeetingStatus,jdbcType=TINYINT},
+	      ORDER_CODE_ = #{orderCode,jdbcType=INTEGER},
+	      UPDATE_EMP_ = #{updateEmp,jdbcType=VARCHAR},
+	      UPDATE_TIME_ = #{updateTime,jdbcType=TIMESTAMP},
+	      VERSION = VERSION +1 
+	    WHERE ID_ = #{id,jdbcType=VARCHAR}
+	
+	</update>
+
+
+	<!-- 删除议程 -->
+	<delete id="deleteById" parameterType="String">
+		DELETE FROM SYS_SUBMEETING
+		WHERE ID_ = #{id}
+	</delete>
+	
+	
+</mapper>

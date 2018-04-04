@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html layout:decorator="/common/head_link" >
+<head>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content">
+				<div class="form-horizontal" id="partmeetingInfoForm">
+				
+					<input type="hidden" id="id" th:value="${partmeeting.id}" >
+					<input type="hidden" id="meetingId" th:value="${partmeeting.meetingId}" >
+
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">分会场主题</label>
+								<div class="col-sm-10">
+									<input class="form-control" id="partmeetingTitle" 
+										name="partmeetingTitle" type="text" th:value="${partmeeting.partmeetingTitle}">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">开始时间</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control"	id="starttime" name="starttime"  
+									th:value="${#dates.format(partmeeting.starttime, 'yyyy-MM-dd HH:mm:ss')}"/>
+								</div>
+
+								<label class="col-sm-2 control-label">结束时间</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control " id="endtime" name="endtime"  
+									th:value="${#dates.format(partmeeting.endtime, 'yyyy-MM-dd HH:mm:ss')}" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">最早签到时间</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control"	id="earlytime" name="earlytime"  
+									th:value="${#dates.format(partmeeting.earlytime, 'yyyy-MM-dd HH:mm:ss')}"/>
+								</div>
+
+								<label class="col-sm-2 control-label">最晚签到时间</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control " id="latesttime" name="latesttime"  
+									th:value="${#dates.format(partmeeting.latesttime, 'yyyy-MM-dd HH:mm:ss')}" />
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">分会场地点</label>
+								<div class="col-sm-4">
+									<input class="form-control" id="partmeetingLocation" th:value="${partmeeting.partmeetingLocation}"
+										name="partmeetingLocation" type="text"  >
+								</div>
+
+								<label class="col-sm-2 control-label">分会场主持人</label>
+								<div class="col-sm-4">
+									<input class="form-control" id="partmeetingHost" th:value="${partmeeting.partmeetingHost}"
+										name="partmeetingHost" type="text"  >
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">是否允许扫码绑定</label>
+								<div class="col-sm-4">
+									<select id="scanStatus" name="scanStatus" class="form-control " >
+										<option value="0" th:selected="${partmeeting.scanStatus==0}">允许</option>
+										<option value="1" th:selected="${partmeeting.scanStatus==1}">不允许</option>
+									</select>
+								</div>
+								
+								<label class="col-sm-2 control-label">分会场状态</label>
+								<div class="col-sm-4">
+									<select id="partmeetingStatus" name="partmeetingStatus" class="form-control" >
+										<option value="0" th:selected="${partmeeting.partmeetingStatus==0}">创建</option>
+										<option value="1" th:selected="${partmeeting.partmeetingStatus==1}">发布</option>
+										<option value="2" th:selected="${partmeeting.partmeetingStatus==2}">取消</option>
+										<option value="3" th:selected="${partmeeting.partmeetingStatus==3}">完成</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row btn-group-m-t">
+				<div class="col-sm-10">
+					<button type="button" class="btn btn-info "
+						onclick="partmeetingInfoDlg.editSubmit()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;提交
+					</button>
+
+					<button type="button" class="btn btn-danger "
+						onclick="partmeetingInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+<script src="/js/content.js?v=1.0.0"></script>
+<script src="/modular/v4ward/partmeeting/partmeeting_info.js"></script>
+
+<script>
+	//执行一个laydate实例
+	laydate.render({
+		elem : '#starttime' //指定元素
+	   ,type: 'datetime'
+	});
+	laydate.render({
+		elem : '#endtime' //指定元素
+	   ,type: 'datetime'
+	});
+	laydate.render({
+		elem : '#earlytime' //指定元素
+	   ,type: 'datetime'
+	});
+	laydate.render({
+		elem : '#latesttime' //指定元素
+	   ,type: 'datetime'
+	});
+</script>
+</body>
+</html>
+
+
